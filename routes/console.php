@@ -1,12 +1,16 @@
 <?php
 namespace GalleryApp;
 
-require_once 'cron.php';
-
+use App\Services\GalleryService;
 use Illuminate\Support\Facades\Artisan;
-use function GalleryApp\Commands\syncGallery;
+use App\Services\GallerySyncService;
 
-Artisan::command('sync', function () {
-    $this->comment('Syncing gallery...');
-    syncGallery();
+Artisan::command('sync {--slug=}', function (GallerySyncService $webdavService) {
+    $slug = $this->option('slug');
+    $webdavService->syncGallery($slug);
+})->purpose('Display an inspiring quote');
+
+Artisan::command('clean {--slug=}', function (GallerySyncService $webdavService) {
+    $slug = $this->option('slug');
+    $webdavService->cleanGallery($slug);
 })->purpose('Display an inspiring quote');

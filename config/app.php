@@ -27,6 +27,9 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'webdav.url' => env('WEBDAV_URL', ''),
+    'webdav.username' => env('WEBDAV_USERNAME', ''),
+    'webdav.password' => env('WEBDAV_PASSWORD', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +42,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -123,4 +126,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'author' => env('APP_AUTHOR', 'John Doe')
 ];

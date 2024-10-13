@@ -1,21 +1,16 @@
-@vite('resources/css/gallery-image.css')
+@vite('resources/css/app.css')
 
-<x-layout>
-    <x-slot name="title">
-        SteKoes Foto Gallery | Gallery {{ $slug }}
-    </x-slot>
-
-    <div>
-        <div class="gallery-images">
-            @forelse ($images as $image)
-                <img
-                    class="gallery-image--polaroid gallery-image--polaroid__30"
-                    src="{{ asset('/images/gallery/' . $slug . '/thumb_' . $image) }}"
-                    alt="{{ $image }}"
-                >
-            @empty
-                <p>No images</p>
-            @endforelse
-        </div>
+<x-layout :subtitle="$name">
+    <div class="page-gallery gallery-images">
+        @forelse ($images as $idx => $image)
+        <img
+            class="gallery-image--polaroid {{ $idx % 3 === 0 ? 'gallery-image--sm' : '' }}"
+            src="{{ '/image/' . $image['file_id'] }}"
+            alt="{{ $image['src'] }}"
+            title="{{ $image['tags'] }}"
+        >
+        @empty
+        <p>No images</p>
+        @endforelse
     </div>
 </x-layout>

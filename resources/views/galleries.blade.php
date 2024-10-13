@@ -1,11 +1,20 @@
-<x-layout>
-    <x-slot name="title">
-        SteKoes Foto Gallery
-    </x-slot>
-
-    <div>
-        <h1>Hello World!</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Hic, aut?</p>
-        <button class="btn">Get Started</button>
+<x-layout title="Galerien" subtitle="Alle Galerien">
+    <div class="page-galleries gallery-images">
+        @forelse ($galleries as $idx => $gallery)
+        <a
+            href="{{ route('gallery', ['slug' => $gallery['slug']]) }}"
+            class="gallery-image--polaroid"
+        >
+            <div class="gallery-title">
+                <h2>{{ $gallery['name_no_date'] }}</h2>
+            </div>
+            <img
+                src="{{ '/image/' . $gallery['cover'] }}"
+                alt="{{ $gallery['cover'] }}"
+            >
+        </a>
+        @empty
+        <p>No images</p>
+        @endforelse
     </div>
 </x-layout>
