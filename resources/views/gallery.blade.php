@@ -5,12 +5,11 @@
         <div class="gallery-images">
             @forelse ($images as $idx => $image)
             <a
-                href="{{ '/image/' . $image['file_id'] }}"
+                href="{{ "/". $image['href'] }}"
                 class="gallery-image--polaroid"
             >
                 <img
-                    src="{{ '/image/' . $image['file_id'] }}"
-                    alt="{{ $image['src'] }}"
+                    src="{{ "/". $image['href'] }}"
                     title="{{ $image['tags'] }}"
                 >
             </a>
