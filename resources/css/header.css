@@ -1,0 +1,7 @@
+.navigation__links {
+    @apply inline-flex gap-4;
+
+    .active {
+        @apply underline underline-offset-4;
+    }
+}

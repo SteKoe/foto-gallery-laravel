@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GalleryImage;
 use App\Services\GallerySyncService;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class GalleryController
 {
@@ -17,11 +17,9 @@ class GalleryController
 
     function index()
     {
-        $tags = [9];
-        $galleries = $this->getScopedGalleryImageQuery()->groupBy('slug')->get()->toArray();
+        $galleries = $this->getScopedGalleryImageQuery([9])->groupBy('slug')->get()->toArray();
 
         $galleries = array_map(function ($gallery) {
-            $pathinfo = pathinfo($gallery['href']);
             $gallery['cover'] = $gallery['file_id'];
             $gallery['name_no_date'] = preg_replace('/\d{4}(\.\d{2}){0,2}/', '', $gallery['name']);
             return $gallery;
@@ -34,21 +32,19 @@ class GalleryController
 
     function gallery(string $slug)
     {
-        $images = $this->getScopedGalleryImageQuery()->where('slug', $slug)->get();
+        $allowed_tags = session()->get('allowed_tags') ?: [9];
+
+        $images = $this->getScopedGalleryImageQuery($allowed_tags)->where('slug', $slug)->get();
 
         $name = $images[0]['name'];
         $images = $images->map($this->mapToImageResponse(), $images);
 
-        return view('gallery', compact('slug', 'images', 'name'));
+        return view('gallery', compact('slug', 'images', 'name', 'allowed_tags'));
     }
 
-    function image(string $id, Request $request)
+    function image(string $id)
     {
         $image = GalleryImage::find($id);
-
-        ob_start();
-        $this->gallerySyncService->downloadFile($image, $image['file_id']);
-        ob_clean();
 
         $response = $this->mapToImageResponse()($image);
 
@@ -59,25 +55,37 @@ class GalleryController
         return response($file, 200)->header('Content-Type', $type);
     }
 
-    private function getScopedGalleryImageQuery()
+    function logout()
     {
-        $tags = [9];
-        return GalleryImage::whereIn('file_id', function ($subquery) use ($tags) {
-            $subquery->select('git.file_id')
-                ->from('gallery_image_gallery_image_tag as git')
-                ->whereIn('git.tag_id', $tags)
-                ->whereNotIn('git.file_id', function ($subquery2) use ($tags) {
-                    $subquery2->select('git.file_id')
-                        ->from('gallery_image_gallery_image_tag as git')
-                        ->whereNotIn('git.tag_id', $tags);
-                })
-                ->groupBy('git.file_id');
-        });
+        session()->forget('allowed_tags');
+        session()->forget('token');
+        Cookie::queue(Cookie::forget('token'));
+
+        return redirect()->route('home');
     }
 
-    /**
-     * @return \Closure
-     */
+    private function getScopedGalleryImageQuery($tags = [])
+    {
+        // When "tags" contains "*" do not filter at all.
+        if (in_array('*', $tags)) {
+            return GalleryImage::orderBy('displayname');
+        } else {
+            return GalleryImage::whereIn('file_id', function ($subquery) use ($tags) {
+                $groupBy = $subquery->select('git.file_id')
+                    ->from('gallery_image_gallery_image_tag as git')
+                    ->groupBy('git.file_id');
+
+                $groupBy
+                    ->whereIn('git.tag_id', $tags)
+                    ->whereNotIn('git.file_id', function ($subquery2) use ($tags) {
+                        $subquery2->select('git.file_id')
+                            ->from('gallery_image_gallery_image_tag as git')
+                            ->whereNotIn('git.tag_id', $tags);
+                    });
+            })->orderBy('displayname');
+        }
+    }
+
     public function mapToImageResponse(): \Closure
     {
         return function ($image) {

@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     @vite('resources/css/app.css')
+    @vite('node_modules/lightgallery/css/lightgallery.css')
+    @vite('node_modules/lightgallery/css/lg-thumbnail.css')
+    @vite('node_modules/lightgallery/css/lg-zoom.css')
+
     @vite('resources/js/app.js')
 </head>
 <body>

@@ -1,4 +1,7 @@
 import './bootstrap';
+import lightGallery from "lightgallery";
+import lgZoom from "lightgallery/plugins/zoom";
+import lgThumbnail from "lightgallery/plugins/thumbnail";
 
 window.addEventListener('scroll', function () {
     let classList = document.querySelector('nav.navigation').classList;
@@ -8,4 +11,10 @@ window.addEventListener('scroll', function () {
     } else {
         classList.remove(classesToAdd);
     }
+});
+
+lightGallery(document.querySelector('.page-gallery .gallery-images'), {
+    plugins: [lgZoom, lgThumbnail],
+    speed: 500,
+    // ... other settings
 });

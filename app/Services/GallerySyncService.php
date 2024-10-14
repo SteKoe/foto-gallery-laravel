@@ -104,6 +104,8 @@ class GallerySyncService
                 }, $file['tags']));
 
                 $galleryImage->save();
+
+                $this->downloadFile($file, $galleryImage->file_id);
             }
 
         } catch (Exception $e) {
@@ -136,16 +138,13 @@ class GallerySyncService
 
             [$width, $height] = $dimensions;
 
-
-
             $dst = $this->imageManager->read($response['body']);
             $dst->scale($width, $height);
             $dst->toJpeg(90)->save($outputPath);
 
             $response = null;
-            return $dst;
-
             echo "done!\n";
+            return $dst;
 
         } catch (Exception $e) {
             echo 'Error downloading and processing file: ' . $e->getMessage();
