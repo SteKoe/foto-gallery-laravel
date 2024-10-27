@@ -5,12 +5,10 @@ use App\Services\GalleryService;
 use Illuminate\Support\Facades\Artisan;
 use App\Services\GallerySyncService;
 
-Artisan::command('sync {--name=} {--skip-download}', function (GallerySyncService $syncService) {
+Artisan::command('sync {--name=} {--skip-download} {--force}', function (GallerySyncService $syncService) {
     $name = $this->option('name');
 
-    $syncService->setOptions([
-        'skip-download' => $this->option('skip-download'),
-    ]);
+    $syncService->setOptions($this->options());
     $syncService->syncGallery($name);
 })->purpose('Display an inspiring quote');
 

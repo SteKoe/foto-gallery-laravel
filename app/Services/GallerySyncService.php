@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\GalleryImage;
+use App\Models\GalleryImageDescriptor;
 use App\Models\GalleryImageTag;
 use App\Models\GallerySyncResult;
 use App\Utils\ArrayUtils;
@@ -25,7 +26,6 @@ class GallerySyncService
 
     public function cleanGallery($name): void
     {
-        $this->cleanGalleriesBySlug([FileUtils::createSlug($name)]);
     }
 
     public function syncGallery($name = null): void
@@ -34,11 +34,9 @@ class GallerySyncService
             $syncResult = $this->getSyncResult($name);
             echo $syncResult->toString();
 
-            //$this->cleanGalleriesBySlug($gallerySlugs);
+            $this->deleteFiles($syncResult->filesToRemove);
 
             foreach ($syncResult->filesToDownload as $file) {
-                echo 'Processing file: ' . $file->displayname . "({$file->fileid})" . PHP_EOL;
-
                 $galleryImage = GalleryImage::firstOrCreate([
                     'fileid' => $file->fileid
                 ]);
@@ -59,7 +57,7 @@ class GallerySyncService
 
                 $galleryImage->save();
 
-                if (isset($this->options['skip-download']) && $this->options['skip-download'] === true) {
+                if (!isset($this->options['skip-download']) || $this->options['skip-download'] !== true) {
                     $this->remoteGalleryService->downloadFile($file, $galleryImage->file_id);
                 }
             }
@@ -71,18 +69,18 @@ class GallerySyncService
 
 
     /**
-     * @param array $galleries
+     * @param GalleryImageDescriptor[] $images
      */
-    private function cleanGalleriesBySlug(array $galleries)
+    private function deleteFiles(array $images)
     {
-        foreach ($galleries as $gallery) {
+        foreach ($images as $image) {
             try {
-                $galleryImage = GalleryImage::where('slug', $gallery)->get();
+                $galleryImage = GalleryImage::where('fileid', $image->fileid)->get();
                 $galleryImage->each(function ($image) {
                     $image->tags()->detach();
                     $image->delete();
                 });
-                FileUtils::removeDir(public_path(join(DIRECTORY_SEPARATOR, ["images", "gallery", $gallery])));
+                FileUtils::removeDir(public_path(join(DIRECTORY_SEPARATOR, ["images", "gallery", $galleryImage->file_id])));
             } catch (Exception $e) {
                 // Directory does not exist
             }
@@ -96,12 +94,15 @@ class GallerySyncService
      */
     public function getSyncResult(?string $name): GallerySyncResult
     {
-        $slug = FileUtils::createSlug($name);
-
         $filesRemote = $this->remoteGalleryService->getRemoteFiles($name);
-        $filesLocal = $this->localGalleryService->getLocalFiles($slug);
+        $filesLocal = $this->localGalleryService->getLocalFiles($name);
 
-        $filesToDownload = ArrayUtils::subtract($filesRemote, $filesLocal);
+        if ($this->getOption('force') === true) {
+            $filesToDownload = $filesRemote;
+        } else {
+            $filesToDownload = ArrayUtils::subtract($filesRemote, $filesLocal);
+        }
+
         $tmp = ArrayUtils::subtract($filesRemote, $filesToDownload);
         $filesToRemove = ArrayUtils::subtract($filesLocal, $tmp);
         $filesUntouched = ArrayUtils::subtract($filesLocal, $filesToRemove);
@@ -111,6 +112,15 @@ class GallerySyncService
             $filesToRemove,
             $filesUntouched
         );
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    private function getOption(string $key): mixed
+    {
+        return array_key_exists($key, $this->options) ? $this->options[$key] : null;
     }
 }
 
