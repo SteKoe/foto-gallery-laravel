@@ -1,0 +1,16 @@
+.alert {
+    --background-color: #e6f4ff;
+    --primary-color: #000;
+    --secondary-color: #228BE6;
+
+    @apply rounded bg-[var(--background-color)] p-4 text-[--primary-color] mb-4;
+
+
+    &.alert--info {
+
+    }
+
+    .alert__title {
+        @apply text-[--secondary-color] font-bold mb-2;
+    }
+}

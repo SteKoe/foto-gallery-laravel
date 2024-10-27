@@ -10,7 +10,8 @@
                     <h2>{{ $gallery['name_no_date'] }}</h2>
                 </div>
                 <img
-                    src="{{ '/image/' . $gallery['cover'] }}"
+                    loading="lazy"
+                    src="{{ $gallery['cover'] }}"
                     alt="{{ $gallery['cover'] }}"
                 >
             </a>

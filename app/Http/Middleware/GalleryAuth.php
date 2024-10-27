@@ -12,6 +12,7 @@ class GalleryAuth
     public function handle(Request $request, Closure $next): Response
     {
         $tags = [9];
+        $user = null;
 
         $cookie = $request->cookie('token');
         $tokenParam = $request->get('token');
@@ -48,6 +49,7 @@ class GalleryAuth
 
         $request->session()->put('allowed_tags', $tags);
         $request->session()->put('token', $token);
+        $request->session()->put('user', $user);
 
         $response = $next($request);
         if (!is_null($token)) {

@@ -15,13 +15,22 @@
             </div>
 
             <ul class="navigation__links">
-                @if (session()->has('token'))
+                @if (session()->has('user') && session()->get('user')->is_admin == true)
                 <li>
-                    <x-nav-link route-name="logout">
-                        Abmelden <small>({{ session()->get('token') }})</small>
+                    <x-nav-link route-name="admin">
+                        Admin
                     </x-nav-link>
                 </li>
                 @endif
+
+                @if (session()->has('token'))
+                <li>
+                    <x-nav-link route-name="logout">
+                        Abmelden <small class="hidden sm:inline text-gray-400 italic">({{ session()->get('token') }})</small>
+                    </x-nav-link>
+                </li>
+                @endif
+
             </ul>
         </div>
     </div>

@@ -2,23 +2,28 @@
 
 namespace App\Models;
 
+use App\Utils\FileUtils;
+
 abstract class GalleryGuesser
 {
     protected string $GALLERY_IMAGE_REGEX = '/[^\/]*\.(jpe?g)$/i';
 
     abstract public function accept($href);
 
-    abstract public function getGallery($href);
+    /**
+     * @param $href
+     * @return array
+     */
+    abstract public function getGallery($href): array;
 
-    abstract public function getSection($href);
+    /**
+     * @param $href
+     * @return string
+     */
+    abstract public function getSection($href): ?string;
 
     protected function createSlug($name): string
     {
-        $string = strtolower($name);
-        $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-        $string = preg_replace('/[^a-z0-9\s\-.]/', '', $string);
-        $string = preg_replace('/[\s-]+/', '-', $string);
-        $string = trim($string, '-');
-        return $string;
+        return FileUtils::createSlug($name);
     }
 }

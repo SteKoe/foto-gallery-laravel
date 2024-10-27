@@ -1,0 +1,26 @@
+.checkbox-group-item {
+    --text-color: #fff;
+    --border-color: #fff;
+    --background-color: var(--background-color);
+
+    --text-color-disabled: #8f8f8f;
+    --border-color-disabled: #8f8f8f;
+    --background-color-disabled: var(--background-color);
+
+    @apply border rounded-full whitespace-nowrap px-2 select-none;
+
+    &:has(input[type="checkbox"]:checked) {
+        @apply bg-white/40 text-white;
+    }
+
+    &:has(input[type="checkbox"]:disabled) {
+        @apply border-[var(--border-color-disabled)]
+            bg-[var(--background-color-disabled)]
+            text-[var(--text-color-disabled)]
+            cursor-not-allowed;
+    }
+
+    input[type="checkbox"] {
+        @apply hidden;
+    }
+}

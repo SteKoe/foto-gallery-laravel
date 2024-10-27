@@ -1,5 +1,3 @@
-@vite('resources/css/app.css')
-
 <x-layout :subtitle="$name">
     <div class="page-gallery">
         <div class="gallery-images">
@@ -9,6 +7,7 @@
                 class="gallery-image--polaroid"
             >
                 <img
+                    loading="lazy"
                     src="{{ "/". $image['href'] }}"
                     title="{{ $image['tags'] }}"
                 >

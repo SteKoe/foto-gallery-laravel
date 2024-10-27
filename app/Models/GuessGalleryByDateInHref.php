@@ -33,15 +33,13 @@ class GuessGalleryByDateInHref extends GalleryGuesser {
         ];
     }
 
-    public function getSection($href): string
+    public function getSection($href): ?string
     {
         // Match the section from the URL
         if (preg_match($this->GALLERY_SECTION_REGEX, $href, $matches)) {
-            $section = $matches['section'] ?? '';
-        } else {
-            $section = '';
+            return $matches['section'] ? urldecode($matches['section']) : null;
         }
 
-        return urldecode($section);
+        return null;
     }
 }

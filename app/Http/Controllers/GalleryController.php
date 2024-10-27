@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GalleryImage;
 use App\Services\GallerySyncService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cookie;
 
 class GalleryController
@@ -20,7 +21,9 @@ class GalleryController
         $galleries = $this->getScopedGalleryImageQuery([9])->groupBy('slug')->get()->toArray();
 
         $galleries = array_map(function ($gallery) {
-            $gallery['cover'] = $gallery['file_id'];
+            $pathinfo = pathinfo($gallery['href']);
+            $src = "{$gallery['file_id']}.{$pathinfo['extension']}";
+            $gallery['cover'] = '/images/gallery/' . $gallery['slug'] . '/' . $src;
             $gallery['name_no_date'] = preg_replace('/\d{4}(\.\d{2}){0,2}/', '', $gallery['name']);
             return $gallery;
         }, $galleries);
@@ -55,10 +58,11 @@ class GalleryController
         return response($file, 200)->header('Content-Type', $type);
     }
 
-    function logout()
+    function logout(): RedirectResponse
     {
         session()->forget('allowed_tags');
         session()->forget('token');
+        session()->forget('user');
         Cookie::queue(Cookie::forget('token'));
 
         return redirect()->route('home');
@@ -92,12 +96,18 @@ class GalleryController
             $pathinfo = pathinfo($image['href']);
             $src = "{$image['file_id']}.{$pathinfo['extension']}";
 
+            [$width, $height] = getimagesize(public_path('images/gallery/' . $image['slug'] . '/' . $src));
+
             return array(
                 "file_id" => $image['file_id'],
                 "tags" => join(',', array_map(function ($image) {
                     return $image['tag_value'];
                 }, $image->tags()->get()->toArray())),
                 "src" => $src,
+                "size" => [
+                    "width" => $width,
+                    "height" => $height
+                ],
                 "slug" => $image['slug'],
                 "href" => 'images/gallery/' . $image['slug'] . '/' . $src,
             );

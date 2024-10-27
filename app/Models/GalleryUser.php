@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class GalleryUser extends Model
 {
@@ -13,9 +14,12 @@ class GalleryUser extends Model
 
     protected $primaryKey = 'user_id';
     public $timestamps = false;
+    protected $casts = [
+        'is_admin' => 'boolean',
+    ];
 
-    public function tags()
+    public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(GalleryUsersGalleryImageTag::class, 'gallery_users', 'user_id', 'user_id');
+        return $this->belongsToMany(GalleryImageTag::class, 'gallery_users_gallery_image_tags', 'user_id', 'tag_id')->select('*');
     }
 }
