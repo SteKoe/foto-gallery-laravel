@@ -48,18 +48,19 @@ h1 {
 }
 
 .gallery-images {
-    @apply flex flex-wrap gap-2 rounded-2xl mx-auto;
-
-    img {
-        @apply object-cover aspect-square;
-        @apply w-full;
-    }
+    @apply grid grid-cols-4 flex-wrap gap-2 rounded-2xl mx-auto;
+    counter-reset: grid-item-counter;
 }
 
-.gallery-image--polaroid {
+.gallery-image {
+    counter-increment: grid-item-counter;
     @apply bg-white overflow-hidden relative z-0 transition-all;
-    @apply flex-[40%] md:flex-[20%];
+    @apply col-span-2 md:col-span-1;
 
+    img {
+        @apply object-cover aspect-[1/1];
+        @apply w-full h-full;
+    }
 
     &.gallery-image--sm {
         @apply flex-[20%];

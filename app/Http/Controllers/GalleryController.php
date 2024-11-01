@@ -108,6 +108,7 @@ class GalleryController
                     "width" => $width,
                     "height" => $height
                 ],
+                "orientation" => $width > $height ? 'landscape' : 'portrait',
                 "slug" => $image['slug'],
                 "href" => 'images/gallery/' . $image['slug'] . '/' . $src,
             );

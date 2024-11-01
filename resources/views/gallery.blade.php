@@ -4,10 +4,11 @@
             @forelse ($images as $idx => $image)
             <a
                 href="{{ "/". $image['href'] }}"
-                class="gallery-image--polaroid"
+                class="gallery-image"
             >
                 <img
                     loading="lazy"
+                    data-orientation="{{ $image['orientation'] }}"
                     src="{{ "/". $image['href'] }}"
                     title="{{ $image['tags'] }}"
                 >
