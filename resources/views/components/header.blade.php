@@ -3,7 +3,7 @@
 <nav class="navigation">
     <div class="container">
         <div class="navigation__content">
-            <div>
+            <div class="page-title">
                 <h1>
                     <a href="{{ route('home') }}">
                         {{ config('app.name') }}

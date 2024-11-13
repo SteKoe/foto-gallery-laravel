@@ -203,8 +203,9 @@ class RemoteGalleryService
         try {
             $pathInfo = pathinfo($file->href);
             $file_name = "{$file_id}.{$pathInfo['extension']}";
-            $outputPath = public_path(join(DIRECTORY_SEPARATOR, ["images", "gallery", $file->gallery['slug'], $file_name]));
-            $targetDir = public_path(join(DIRECTORY_SEPARATOR, ["images", "gallery", $file->gallery['slug']]));
+            $storagePath = storage_path("app/public");
+            $outputPath = join(DIRECTORY_SEPARATOR, [$storagePath, "gallery", $file->gallery['slug'], $file_name]);
+            $targetDir = join(DIRECTORY_SEPARATOR, [$storagePath, "gallery", $file->gallery['slug']]);
 
             echo "Generating thumbnail for $outputPath .... ";
 

@@ -96,7 +96,7 @@ class GalleryController
             $pathinfo = pathinfo($image['href']);
             $src = "{$image['file_id']}.{$pathinfo['extension']}";
 
-            [$width, $height] = getimagesize(public_path('images/gallery/' . $image['slug'] . '/' . $src));
+            [$width, $height] = storage_path(('app/public/gallery/' . $image['slug'] . '/' . $src));
 
             return array(
                 "file_id" => $image['file_id'],

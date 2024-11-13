@@ -32,18 +32,26 @@ h1 {
 }
 
 .navigation {
-    @apply sticky top-0 shadow-none bg-[var(--background-color)] backdrop-blur-2xl transition-all duration-200 z-50 text-white;
-
-    &.scrolled {
-        @apply shadow-2xl shadow-black bg-gray-600/40;
-    }
+    @apply sticky top-0 shadow-none bg-[var(--background-color)] backdrop-blur-2xl transition-all z-50 text-white;
 
     .navigation__content {
-        @apply px-2 py-4 xl:py-6 lg:px-10 flex justify-between items-center;
+        @apply px-2 py-4 xl:py-6 lg:px-10 flex justify-between items-center transition-all;
     }
 
     h1 {
         @apply text-2xl md:text-4xl font-bold;
+    }
+
+    &.scrolled {
+        @apply shadow-2xl shadow-black bg-gray-600/40 ;
+
+        .navigation__content {
+            @apply px-2 py-2 xl:py-2 lg:px-5;
+        }
+
+        h1 {
+            @apply hidden;
+        }
     }
 }
 
