@@ -30,6 +30,6 @@ window.addEventListener('scroll', function () {
 
 lightGallery(document.querySelector('.page-gallery .gallery-images'), {
     plugins: [lgZoom, lgThumbnail],
-    pager: true,
+    closable: true,
     speed: 500,
 });

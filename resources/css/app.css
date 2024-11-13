@@ -62,12 +62,12 @@ h1 {
 
 .gallery-image {
     counter-increment: grid-item-counter;
-    @apply bg-white overflow-hidden relative z-0 transition-all;
+    @apply bg-white overflow-hidden relative z-0 transition-all aspect-square;
     @apply col-span-2 md:col-span-1;
 
     img {
         @apply object-cover aspect-[1/1];
-        @apply w-full h-full;
+        @apply w-full;
     }
 
     &.gallery-image--sm {
