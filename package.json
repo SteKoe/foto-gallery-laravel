@@ -4,7 +4,8 @@
     "scripts": {
         "dev": "vite",
         "run:laravel": "php artisan serve",
-        "build": "vite build"
+        "build": "vite build",
+        "test": "./vendor/bin/phpunit tests"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.20",
