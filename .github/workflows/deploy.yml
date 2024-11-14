@@ -1,5 +1,3 @@
-name: Build and Deploy Laravel Application
-
 on:
   push:
     branches:
@@ -32,6 +30,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to FTP server
+        if: github.ref == 'refs/heads/main'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: stekoe.de
