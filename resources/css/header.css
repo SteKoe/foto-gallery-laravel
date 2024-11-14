@@ -1,7 +1,44 @@
-.navigation__links {
-    @apply inline-flex gap-4;
+.navigation {
+    @apply fixed w-full top-0 shadow-none bg-[var(--background-color)] backdrop-blur-2xl transition-all z-50 text-white;
 
-    .active {
-        @apply underline underline-offset-4;
+    .navigation__back {
+        @apply pr-2 md:pr-4 text-base md:text-2xl;
     }
+
+    .navigation__content {
+        @apply px-2 py-4 xl:py-6 lg:px-4 flex justify-between items-center transition-all;
+    }
+
+    .navigation__links {
+        @apply inline-flex gap-4;
+
+        .active {
+            @apply underline underline-offset-4;
+        }
+    }
+
+    h1 {
+        @apply text-2xl md:text-4xl font-bold;
+    }
+
+    h2 {
+        @apply overflow-hidden text-ellipsis whitespace-nowrap;
+    }
+
+    &.scrolled {
+        @apply shadow-2xl shadow-black bg-gray-600/40 ;
+
+        .navigation__content {
+            @apply px-2 py-2 xl:py-2 lg:px-5;
+        }
+
+        h1 {
+            @apply hidden;
+        }
+    }
+}
+
+
+.page-title {
+    @apply flex-1;
 }

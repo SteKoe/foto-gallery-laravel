@@ -2,7 +2,7 @@
     <div class="grid grid-cols-3 py-8">
         <div>&nbsp;</div>
         <div class="w-11/12">
-            &copy; {{ date('Y') }} <a href="{{ url('/') }}">by {{ config('app.author') }}</a>
+            &copy; {{ date('Y') }} <a class="whitespace-nowrap" href="{{ url('/') }}">by {{ config('app.author') }}</a>
         </div>
         <div class="text-right">
             <a href="javascript:window.scrollTo({top: 0, behavior: 'smooth'});" id="to-top" class="opacity-0 transition-all text-white fixed bottom-5 right-5 rounded-full bg-black/60 backdrop-blur-2xl p-4">

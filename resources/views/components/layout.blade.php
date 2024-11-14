@@ -8,11 +8,11 @@
     @vite('resources/css/app.css')
 </head>
 <body>
-<x-header :title="$title ?? ''" :subtitle="$subtitle  ?? ''" />
-<main class="container">
-    {{ $slot }}
-</main>
-<x-footer />
-@vite('resources/js/main.ts')
+    <x-header :title="$title ?? ''" :subtitle="$subtitle  ?? ''" :showBackButton="$attributes['showBackButton'] ?? false" />
+    <main class="container">
+        {{ $slot }}
+    </main>
+    <x-footer />
+    @vite('resources/js/main.ts')
 </body>
 </html>

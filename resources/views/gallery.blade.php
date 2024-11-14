@@ -1,23 +1,23 @@
-<x-layout :subtitle="$name">
+<x-layout :subtitle="$name" :showBackButton="true" class="asd">
     <div class="page-gallery">
         <div class="gallery-images">
             @forelse ($images as $idx => $image)
             <a
-                href="{{ "/". $image['href'] }}"
+                href="{{ '/' . $image['href'] }}"
                 class="gallery-image"
             >
                 <img
                     loading="lazy"
                     data-orientation="{{ $image['orientation'] }}"
-                    src="{{ "/". $image['href'] }}"
+                    src="{{ '/' . $image['href'] }}"
                     title="{{ $image['tags'] }}"
                 >
             </a>
             @empty
-            <p>No images</p>
+            <p class="text-center col-span-4">{{ __('messages.no_images') }}</p>
             @endforelse
         </div>
     </div>
-
-    @vite('resources/js/lightgallery.ts')
 </x-layout>
+
+@vite('resources/js/lightgallery.ts')

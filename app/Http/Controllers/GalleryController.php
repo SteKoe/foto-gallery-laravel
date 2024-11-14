@@ -41,7 +41,6 @@ class GalleryController
 
         $name = $images[0]['name'];
         $images = $images->map($this->mapToImageResponse(), $images);
-
         return view('gallery', compact('slug', 'images', 'name', 'allowed_tags'));
     }
 

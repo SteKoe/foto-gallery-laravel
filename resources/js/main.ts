@@ -3,18 +3,17 @@ const toTopLink = document.querySelector('#to-top').classList
 const classesToAdd = 'scrolled';
 
 window.addEventListener('scroll', function () {
-    let currentScroll = window.scrollY;
+    let threshold = 50;
+    let currentScroll = document.body.scrollTop > threshold || document.documentElement.scrollTop > threshold;
 
-    if (currentScroll > 49.5) {
+    if (currentScroll) {
         classList.add(classesToAdd);
-    } else {
-        classList.remove(classesToAdd);
-    }
 
-    if (currentScroll > 250) {
         toTopLink.remove('opacity-0');
         toTopLink.add('opacity-100');
     } else {
+        classList.remove(classesToAdd);
+
         toTopLink.add('opacity-0');
         toTopLink.remove('opacity-100');
     }

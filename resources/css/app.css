@@ -7,13 +7,10 @@ body {
     @apply bg-[var(--background-color)] text-white;
 }
 
-main {
-    @apply mr-4 sm:mt-8;
-}
-
 h1 {
     @apply text-4xl font-bold;
 }
+
 
 .container {
     @apply my-0 px-2 2xl:px-0 w-full max-w-7xl mx-auto;
@@ -31,28 +28,8 @@ h1 {
     }
 }
 
-.navigation {
-    @apply sticky top-0 shadow-none bg-[var(--background-color)] backdrop-blur-2xl transition-all z-50 text-white;
-
-    .navigation__content {
-        @apply px-2 py-4 xl:py-6 lg:px-10 flex justify-between items-center transition-all;
-    }
-
-    h1 {
-        @apply text-2xl md:text-4xl font-bold;
-    }
-
-    &.scrolled {
-        @apply shadow-2xl shadow-black bg-gray-600/40 ;
-
-        .navigation__content {
-            @apply px-2 py-2 xl:py-2 lg:px-5;
-        }
-
-        h1 {
-            @apply hidden;
-        }
-    }
+main.container {
+    @apply mt-24;
 }
 
 .gallery-images {
@@ -62,7 +39,7 @@ h1 {
 
 .gallery-image {
     counter-increment: grid-item-counter;
-    @apply bg-white overflow-hidden relative z-0 transition-all aspect-square;
+    @apply bg-white overflow-hidden relative z-0 aspect-square;
     @apply col-span-2 md:col-span-1;
 
     img {
