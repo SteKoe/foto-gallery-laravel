@@ -11,7 +11,7 @@ class NavLink extends Component
     public string $routeName;
     public string $title;
 
-    public function __construct($routeName, $title)
+    public function __construct($routeName, $title = "")
     {
         $this->routeName = $routeName;
         $this->title = $title;

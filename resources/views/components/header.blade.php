@@ -26,7 +26,12 @@
                 @if (session()->has('user') && session()->get('user')->is_admin == true)
                 <li>
                     <x-nav-link route-name="admin">
-                        Admin
+                        <div class="hidden md:inline">
+                            {{ __('messages.admin') }} <small class="hidden sm:inline text-gray-400 italic">({{ session()->get('token') }})</small>
+                        </div>
+                        <div class="inline md:hidden">
+                            <x-icons.admin />
+                        </div>
                     </x-nav-link>
                 </li>
                 @endif
