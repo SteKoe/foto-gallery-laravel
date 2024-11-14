@@ -1,16 +1,7 @@
-import './bootstrap';
-import lightGallery from "lightgallery";
-import lgZoom from "lightgallery/plugins/zoom";
-import lgThumbnail from "lightgallery/plugins/thumbnail";
-import lgHash from "lightgallery/plugins/hash";
-
-import "lightgallery/css/lightgallery.css"
-import "lightgallery/css/lg-medium-zoom.css"
-import "lightgallery/css/lg-thumbnail.css"
-
 const classList = document.querySelector('nav.navigation').classList;
 const toTopLink = document.querySelector('#to-top').classList
 const classesToAdd = 'scrolled';
+
 window.addEventListener('scroll', function () {
     let currentScroll = window.scrollY;
 
@@ -27,10 +18,4 @@ window.addEventListener('scroll', function () {
         toTopLink.add('opacity-0');
         toTopLink.remove('opacity-100');
     }
-});
-
-lightGallery(document.querySelector('.page-gallery .gallery-images'), {
-    plugins: [lgZoom, lgThumbnail, lgHash],
-    closable: true,
-    speed: 500,
 });

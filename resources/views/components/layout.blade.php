@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     @vite('resources/css/app.css')
-    @vite('resources/js/app.ts')
 </head>
 <body>
 <x-header :title="$title ?? ''" :subtitle="$subtitle  ?? ''" />
@@ -14,5 +13,6 @@
     {{ $slot }}
 </main>
 <x-footer />
+@vite('resources/js/main.ts')
 </body>
 </html>

@@ -7,7 +7,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/header.css',
-                'resources/js/app.ts'
+                'resources/js/main.ts',
+                'resources/js/lightgallery.ts'
             ],
             refresh: true,
         }),

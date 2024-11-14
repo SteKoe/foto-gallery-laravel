@@ -18,4 +18,6 @@
             @endforelse
         </div>
     </div>
+
+    @vite('resources/js/lightgallery.ts')
 </x-layout>
