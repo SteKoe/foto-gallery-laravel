@@ -2,6 +2,7 @@ import './bootstrap';
 import lightGallery from "lightgallery";
 import lgZoom from "lightgallery/plugins/zoom";
 import lgThumbnail from "lightgallery/plugins/thumbnail";
+import lgHash from "lightgallery/plugins/hash";
 
 import "lightgallery/css/lightgallery.css"
 import "lightgallery/css/lg-medium-zoom.css"
@@ -29,7 +30,7 @@ window.addEventListener('scroll', function () {
 });
 
 lightGallery(document.querySelector('.page-gallery .gallery-images'), {
-    plugins: [lgZoom, lgThumbnail],
+    plugins: [lgZoom, lgThumbnail, lgHash],
     closable: true,
     speed: 500,
 });
