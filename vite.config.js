@@ -7,6 +7,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/admin.css',
+                'resources/views/components/alert/alert.css',
+                'resources/views/components/form/checkbox.css',
                 'resources/css/header.css',
                 'resources/js/main.ts',
                 'resources/js/lightgallery.ts'
