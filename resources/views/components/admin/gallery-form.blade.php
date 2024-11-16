@@ -12,7 +12,7 @@
         :value="$galleryImageTag->tag_id"
         :disabled="in_array($galleryImageTag->tag_id, [9])"
         :checked="in_array($galleryImageTag->tag_id, array_map(function($tag) { return $tag['tag_id']; }, $checkedTags))"
-        name="tag[{{ $gallery ? $gallery['slug'] : 'global' }}]"
+        name="tag[{{ $gallery ? $gallery['slug'] : 'global' }}][]"
     />
     @endforeach
 </div>

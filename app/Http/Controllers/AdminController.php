@@ -12,9 +12,14 @@ class AdminController
 {
     public function index()
     {
-        $users = GalleryUser::all()->toArray();
+        $users = $this->get_all_users();
 
         return view('admin.index', compact('users'));
+    }
+
+    private function get_all_users()
+    {
+        return GalleryUser::orderBy('is_admin', 'DESC')->orderBy('token')->get();
     }
 
     public function create_user(Request $request)
@@ -24,6 +29,7 @@ class AdminController
             $attributes = request()->all();
             $user->fill([
                 ...$attributes,
+                "is_admin" => isset($attributes["is_admin"]) ? 1 : 0,
                 "token" => $attributes["user_token"],
             ]);
             $user->save();
@@ -31,14 +37,14 @@ class AdminController
             return redirect()->route('admin.user', ['user_id' => $user->user_id]);
         }
 
-        $users = GalleryUser::all();
+        $users = $this->get_all_users();
 
         return view('admin.user_new', compact('users'));
     }
 
     public function user(Request $request, $user_id)
     {
-        $users = GalleryUser::all();
+        $users = $this->get_all_users();
         $user = $users->first(function ($user) use ($user_id) {
             return $user->user_id == $user_id;
         });
@@ -66,38 +72,37 @@ class AdminController
         $attributes = request()->all();
         $user->fill([
             ...$attributes,
+            "is_admin" => isset($attributes["is_admin"]) ? 1 : 0,
             "token" => $attributes["user_token"],
         ]);
+        $user->tags()->detach();
+
+        if (isset($attributes["tag"])) {
+            $newTags = [];
+            foreach ($attributes["tag"] as $gallery_slug => $tags) {
+                $mapped = array_map(function ($tag) use ($gallery_slug, $user) {
+                    return [
+                        'tag_id' => $tag,
+                        'scope' => $gallery_slug,
+                        'user_id' => $user->user_id
+                    ];
+                }, $tags);
+
+                $newTags = array_merge($newTags, $mapped);
+            }
+            $user->tags()->attach($newTags);
+        }
+
         $user->save();
 
-        var_dump(request()->all());
-        die();
         return redirect()->route('admin.user', ['user_id' => $user_id]);
     }
 
-    public function save_user_permissions($user_id): RedirectResponse
+    public function delete_user($user_id): RedirectResponse
     {
         $user = GalleryUser::find($user_id);
+        $user->delete();
 
-        $arr = request('tag') ?: $user->tags();
-        $gallery_slug = request('gallery_slug') ?: null;
-
-        $tags_to_remove = array_map(function ($tag) {
-            return $tag['tag_id'];
-        }, array_filter($user->tags->toArray(), function ($tag) use ($gallery_slug) {
-            return $tag['scope'] == $gallery_slug;
-        }));
-
-        $user->tags()->detach($tags_to_remove);
-
-        $user->tags()->attach(array_map(function ($tag) use ($gallery_slug, $user) {
-            return [
-                'tag_id' => $tag,
-                'scope' => $gallery_slug,
-                'user_id' => $user->user_id
-            ];
-        }, $arr));
-
-        return redirect()->route('admin.user', ['user_id' => $user_id]);
+        return redirect()->route('admin');
     }
 }

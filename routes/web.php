@@ -54,7 +54,7 @@ Route::post('/admin/user/{user_id}', [AdminController::class, 'save_user'])
         GalleryAuth::class,
         AdminAuth::class
     ]);
-Route::post('/admin/user/{user_id}/permissions', [AdminController::class, 'save_user_permissions'])
+Route::post('/admin/user/{user_id}/delete', [AdminController::class, 'delete_user'])
     ->middleware([
         GalleryAuth::class,
         AdminAuth::class
