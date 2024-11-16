@@ -28,7 +28,7 @@ if (lightSwitches.length > 0) {
         }
         lightSwitch.addEventListener('change', () => {
             console.log("CHANGE")
-            const { checked } = lightSwitch;
+            const {checked} = lightSwitch;
             lightSwitches.forEach((el: HTMLInputElement, n) => {
                 if (n !== i) {
                     el.checked = checked;
@@ -43,6 +43,10 @@ if (lightSwitches.length > 0) {
             }
         });
     });
+}
+
+if (!localStorage.getItem('dark-mode')) {
+    localStorage.setItem('dark-mode', JSON.stringify(true));
 }
 
 if (localStorage.getItem('dark-mode') === 'true' || (!('dark-mode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
