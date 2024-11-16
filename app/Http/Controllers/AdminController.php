@@ -6,6 +6,7 @@ use App\Models\GalleryImage;
 use App\Models\GalleryImageTag;
 use App\Models\GalleryUser;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class AdminController
 {
@@ -16,7 +17,26 @@ class AdminController
         return view('admin.index', compact('users'));
     }
 
-    public function user($user_id)
+    public function create_user(Request $request)
+    {
+        if ($request->method() == 'POST') {
+            $user = new GalleryUser();
+            $attributes = request()->all();
+            $user->fill([
+                ...$attributes,
+                "token" => $attributes["user_token"],
+            ]);
+            $user->save();
+
+            return redirect()->route('admin.user', ['user_id' => $user->user_id]);
+        }
+
+        $users = GalleryUser::all();
+
+        return view('admin.user_new', compact('users'));
+    }
+
+    public function user(Request $request, $user_id)
     {
         $users = GalleryUser::all();
         $user = $users->first(function ($user) use ($user_id) {
@@ -35,15 +55,23 @@ class AdminController
             ->get()
             ->toArray();
 
-        return view('admin.gallery', compact('user', 'users', 'galleries', 'galleryImageTags', 'checkedTags'));
+        $isCurrentUser = $user->user_id == $request->session()->get('user')->user_id;
+
+        return view('admin.user', compact('user', 'users', 'galleries', 'galleryImageTags', 'checkedTags', 'isCurrentUser'));
     }
 
     public function save_user($user_id): RedirectResponse
     {
         $user = GalleryUser::find($user_id);
-        $user->update(request()->all());
+        $attributes = request()->all();
+        $user->fill([
+            ...$attributes,
+            "token" => $attributes["user_token"],
+        ]);
         $user->save();
 
+        var_dump(request()->all());
+        die();
         return redirect()->route('admin.user', ['user_id' => $user_id]);
     }
 

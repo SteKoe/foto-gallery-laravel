@@ -18,3 +18,35 @@ window.addEventListener('scroll', function () {
         toTopLink.remove('opacity-100');
     }
 });
+
+const lightSwitches = document.querySelectorAll('.light-switch');
+console.log(lightSwitches);
+if (lightSwitches.length > 0) {
+    lightSwitches.forEach((lightSwitch: HTMLInputElement, i) => {
+        if (localStorage.getItem('dark-mode') === 'true') {
+            lightSwitch.checked = true;
+        }
+        lightSwitch.addEventListener('change', () => {
+            console.log("CHANGE")
+            const { checked } = lightSwitch;
+            lightSwitches.forEach((el: HTMLInputElement, n) => {
+                if (n !== i) {
+                    el.checked = checked;
+                }
+            });
+            if (lightSwitch.checked) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('dark-mode', JSON.stringify(true));
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('dark-mode', JSON.stringify(false));
+            }
+        });
+    });
+}
+
+if (localStorage.getItem('dark-mode') === 'true' || (!('dark-mode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.querySelector('html').classList.add('dark');
+} else {
+    document.querySelector('html').classList.remove('dark');
+}

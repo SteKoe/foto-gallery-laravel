@@ -31,19 +31,29 @@ Route::get('/admin', [AdminController::class, 'index'])
         AdminAuth::class
     ]);
 
+Route::get('/admin/user', [AdminController::class, 'create_user'])
+    ->name('admin.user.new')
+    ->middleware([
+        GalleryAuth::class,
+        AdminAuth::class
+    ]);
+Route::post('/admin/user', [AdminController::class, 'create_user'])
+    ->middleware([
+        GalleryAuth::class,
+        AdminAuth::class
+    ]);
+
 Route::get('/admin/user/{user_id}', [AdminController::class, 'user'])
     ->name('admin.user')
     ->middleware([
         GalleryAuth::class,
         AdminAuth::class
     ]);
-
 Route::post('/admin/user/{user_id}', [AdminController::class, 'save_user'])
     ->middleware([
         GalleryAuth::class,
         AdminAuth::class
     ]);
-
 Route::post('/admin/user/{user_id}/permissions', [AdminController::class, 'save_user_permissions'])
     ->middleware([
         GalleryAuth::class,

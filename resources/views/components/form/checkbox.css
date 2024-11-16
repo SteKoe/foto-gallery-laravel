@@ -1,3 +1,7 @@
+.checkbox-group {
+    @apply flex flex-wrap gap-1;
+}
+
 .checkbox-group-item {
     --text-color: #fff;
     --border-color: #fff;
@@ -10,7 +14,8 @@
     @apply border rounded-full whitespace-nowrap px-2 select-none;
 
     &:has(input[type="checkbox"]:checked) {
-        @apply bg-white/40 text-white;
+        @apply text-white bg-blue-700;
+        @apply dark:bg-white/40 dark:text-white;
     }
 
     &:has(input[type="checkbox"]:disabled) {

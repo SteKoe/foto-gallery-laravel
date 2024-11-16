@@ -1,5 +1,5 @@
 .navigation {
-    @apply fixed w-full top-0 shadow-none bg-[var(--background-color)] backdrop-blur-2xl transition-all z-50 text-white;
+    @apply fixed w-full top-0 shadow-none bg-white dark:bg-[var(--background-color)] backdrop-blur-2xl transition-all z-50 ;
 
     .navigation__back {
         @apply pr-2 md:pr-4 text-base md:text-2xl;

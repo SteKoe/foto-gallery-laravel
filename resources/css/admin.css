@@ -1,62 +1,26 @@
 .section--admin {
-    @apply rounded-2xl bg-gray-800 text-white p-4 md:p-4;
+    @apply rounded-2xl p-4 md:p-4;
     @apply flex gap-4;
-
-    input {
-        @apply  text-black;
-    }
 }
 
 .navigation--admin {
-    @apply w-1/4 p-4 rounded-2xl bg-[var(--background-color)] text-white;
+    @apply w-1/4 p-2 rounded-xl bg-black/5 dark:bg-white/5;
 
     > ul {
         @apply flex flex-col gap-2;
     }
 
     .navigation--admin__link {
-        @apply block p-2 bg-gray-800 rounded overflow-ellipsis overflow-hidden whitespace-nowrap;
+        @apply block rounded-lg overflow-ellipsis overflow-hidden whitespace-nowrap bg-white dark:bg-[var(--background-color)];
+
+        > a {
+            @apply flex p-2 gap-1 items-center;
+        }
     }
 }
 
 .content--admin {
     @apply flex-1 overflow-hidden;
-}
-
-.btn-group {
-    @apply flex gap-4 mt-4;
-}
-
-.btn {
-    @apply px-4 py-2 rounded-md bg-[var(--background-color)] text-white;
-
-    &.btn-primary {
-        @apply bg-blue-500;
-    }
-
-    &.btn-small {
-        @apply px-2 py-1;
-    }
-}
-
-.form-group {
-    @apply flex gap-4;
-
-    label, .label {
-        @apply col-span-2 w-1/6 text-right;
-    }
-
-    input, textarea {
-        @apply col-span-10;
-    }
-}
-
-.form--admin:not(:last-child) {
-    @apply mb-8 flex flex-col gap-2;
-}
-
-.checkbox-group {
-    @apply flex flex-wrap gap-2;
 }
 
 .h1 {

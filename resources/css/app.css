@@ -2,9 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+html {
     --background-color: #191919;
-    @apply bg-[var(--background-color)] text-white;
+
+    &.dark {
+        --background-color: #191919;
+    }
+}
+
+body {
+    @apply bg-white dark:bg-[var(--background-color)] text-black dark:text-white;
 }
 
 h1 {
@@ -29,7 +36,7 @@ h1 {
 }
 
 main.container {
-    @apply mt-24;
+    @apply mt-28;
 }
 
 .gallery-images {

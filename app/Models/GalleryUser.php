@@ -17,6 +17,10 @@ class GalleryUser extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
+    protected $fillable = [
+        'token',
+        'is_admin',
+    ];
 
     public function tags(): BelongsToMany
     {
