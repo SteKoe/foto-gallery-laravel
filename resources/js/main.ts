@@ -20,7 +20,6 @@ window.addEventListener('scroll', function () {
 });
 
 const lightSwitches = document.querySelectorAll('.light-switch');
-console.log(lightSwitches);
 if (lightSwitches.length > 0) {
     lightSwitches.forEach((lightSwitch: HTMLInputElement, i) => {
         if (localStorage.getItem('dark-mode') === 'true') {
