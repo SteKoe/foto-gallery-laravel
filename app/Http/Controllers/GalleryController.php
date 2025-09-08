@@ -18,15 +18,33 @@ class GalleryController
 
     function index()
     {
-        $galleries = $this->getScopedGalleryImageQuery([9])->groupBy('slug')->get()->toArray();
+        $galleries = $this->getScopedGalleryImageQuery([9])->get()->toArray();
+        $grouped = array_reduce($galleries, function ($carry, $item) {
+            $carry[$item['slug']][] = $item;
+            return $carry;
+        }, []);
+        $grouped = array_map(function ($item) {
+            $more_images = array_map(function ($item) {
+                return $this->getImageSrc($item);
+            }, array_slice($item, 1, 4));
+
+            return [
+                'file_id' => $item[0]['file_id'],
+                'fileid' => $item[0]['fileid'],
+                'displayname' => $item[0]['displayname'],
+                'href' => $item[0]['href'],
+                'name' => $item[0]['name'],
+                'slug' => $item[0]['slug'],
+                'more_images' => $more_images,
+                'total_images' => count($more_images) - 1,
+            ];
+        }, $grouped);
 
         $galleries = array_map(function ($gallery) {
-            $pathinfo = pathinfo($gallery['href']);
-            $src = "{$gallery['file_id']}.{$pathinfo['extension']}";
-            $gallery['cover'] = '/images/gallery/' . $gallery['slug'] . '/' . $src;
+            $gallery['cover'] = $this->getImageSrc($gallery);
             $gallery['name_no_date'] = preg_replace('/\d{4}(\.\d{2}){0,2}/', '', $gallery['name']);
             return $gallery;
-        }, $galleries);
+        }, $grouped);
 
         krsort($galleries);
 
@@ -112,5 +130,17 @@ class GalleryController
                 "href" => 'images/gallery/' . $image['slug'] . '/' . $src,
             );
         };
+    }
+
+    /**
+     * @param array $gallery
+     * @return string
+     */
+    private function getImageSrc(array $gallery): string
+    {
+        $pathinfo = pathinfo($gallery['href']);
+        $src = "{$gallery['file_id']}.{$pathinfo['extension']}";
+        $src = 'https://fotos.stekoe.de/images/gallery/' . $gallery['slug'] . '/' . $src;
+        return $src;
     }
 }

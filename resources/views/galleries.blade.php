@@ -9,11 +9,28 @@
                 <div class="gallery-title">
                     <h2>{{ $gallery['name_no_date'] }}</h2>
                 </div>
-                <img
-                    loading="lazy"
-                    src="{{ $gallery['cover'] }}"
-                    alt="{{ $gallery['cover'] }}"
-                >
+                <div class="image-list">
+                    <div class="image-list--item">
+                        <img
+                            loading="lazy"
+                            src="{{ $gallery['cover'] }}"
+                            alt="{{ $gallery['cover'] }}"
+                        >
+                    </div>
+                    @foreach($gallery['more_images'] as $idx => $more_image)
+                    <div class="image-list--item">
+                        <img
+                            loading="lazy"
+                            src="{{ $more_image }}"
+                        >
+                        @if($gallery['total_images'] > 0 && $idx === count($gallery['more_images'])-1)
+                        <div class="label">
+                            +{{ $gallery['total_images'] }}
+                        </div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
             </a>
             @empty
             <p>No images</p>
