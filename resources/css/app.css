@@ -44,18 +44,38 @@ main.container {
 }
 
 .gallery-images {
-    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 rounded-2xl mx-auto;
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 rounded-xl mx-auto;
     counter-reset: grid-item-counter;
+}
+
+.page-galleries {
+    .gallery-images {
+        @apply gap-8
+    }
+}
+
+.page-gallery {
+    .gallery-images {
+        @apply grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4;
+    }
+
+    .gallery-image {
+        @apply p-0;
+    }
+}
+
+
+.gallery-tile {
+    @apply hover:bg-black/5  hover:dark:bg-white/10;
 }
 
 .gallery-image {
     counter-increment: grid-item-counter;
-    @apply overflow-hidden relative z-0 p-4 pt-2 rounded-xl;
+    @apply overflow-hidden relative z-0 p-4 rounded-xl;
     @apply col-span-2 md:col-span-1;
-    @apply hover:bg-black/5  hover:dark:bg-white/10;
 
     img {
-        @apply object-cover;
+        @apply object-cover aspect-square object-center rounded-lg;
         @apply w-full;
     }
 
@@ -82,7 +102,7 @@ main.container {
     position: relative;
 
     img {
-        @apply w-full h-full rounded-xl object-cover;
+        @apply w-full h-full rounded-lg object-cover;
     }
 }
 
@@ -95,7 +115,7 @@ main.container {
     }
     &:last-child:has(.label)::after {
         content: '';
-        @apply absolute left-0 top-0 rounded-xl backdrop-blur-xl w-full h-full ;
+        @apply absolute left-0 top-0 rounded-lg backdrop-blur-xl w-full h-full ;
     }
 
     .label {

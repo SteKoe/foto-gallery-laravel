@@ -107,9 +107,15 @@ class GalleryController
         }
     }
 
+    /**
+     * @return \Closure<array<GalleryImage>>
+     */
     public function mapToImageResponse(): \Closure
     {
-        return function ($image) {
+        /**
+         * @return array<GalleryImage>
+         */
+        return function ($image) : array {
             $pathinfo = pathinfo($image['href']);
             $src = "{$image['file_id']}.{$pathinfo['extension']}";
 
@@ -127,7 +133,7 @@ class GalleryController
                 ],
                 "orientation" => $width > $height ? 'landscape' : 'portrait',
                 "slug" => $image['slug'],
-                "href" => 'images/gallery/' . $image['slug'] . '/' . $src,
+                "href" => $this->getImageSrc($image)
             );
         };
     }
@@ -136,11 +142,11 @@ class GalleryController
      * @param array $gallery
      * @return string
      */
-    private function getImageSrc(array $gallery): string
+    private function getImageSrc(array | GalleryImage $gallery): string
     {
         $pathinfo = pathinfo($gallery['href']);
         $src = "{$gallery['file_id']}.{$pathinfo['extension']}";
-        $src = 'https://fotos.stekoe.de/images/gallery/' . $gallery['slug'] . '/' . $src;
+        $src = env('APP_URL') . '/images/gallery/' . $gallery['slug'] . '/' . $src;
         return $src;
     }
 }
