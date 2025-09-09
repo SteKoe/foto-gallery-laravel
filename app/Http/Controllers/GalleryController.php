@@ -18,7 +18,8 @@ class GalleryController
 
     function index()
     {
-        $galleries = $this->getScopedGalleryImageQuery([9])->get()->toArray();
+        $allowed_tags = session()->get('allowed_tags') ?: [9];
+        $galleries = $this->getScopedGalleryImageQuery($allowed_tags)->get()->toArray();
         $grouped = array_reduce($galleries, function ($carry, $item) {
             $carry[$item['slug']][] = $item;
             return $carry;
@@ -55,7 +56,6 @@ class GalleryController
     function gallery(string $slug)
     {
         $allowed_tags = session()->get('allowed_tags') ?: [9];
-
         $images = $this->getScopedGalleryImageQuery($allowed_tags)->where('slug', $slug)->get();
 
         $name = $images[0]['name'];
