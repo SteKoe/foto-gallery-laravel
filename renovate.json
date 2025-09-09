@@ -2,5 +2,22 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "config:recommended"
+    ],
+    "labels": [
+        "bot",
+        "dependencies"
+    ],
+    "packageRules": [
+        {
+            "description": "Automatically merge minor and patch-level updates when checks pass, creates a PR otherwise",
+            "matchUpdateTypes": [
+                "minor",
+                "patch",
+                "digest"
+            ],
+            "automerge": true,
+            "automergeType": "pr",
+            "platformAutomerge": true
+        }
     ]
 }
