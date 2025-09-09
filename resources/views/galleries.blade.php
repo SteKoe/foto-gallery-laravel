@@ -23,7 +23,7 @@
                             loading="lazy"
                             src="{{ $more_image }}"
                         >
-                        @if($gallery['total_images'] > 0 && $idx === count($gallery['more_images'])-1)
+                        @if($gallery['total_images'] > 1 && $idx === count($gallery['more_images'])-1)
                         <div class="label">
                             +{{ $gallery['total_images'] }}
                         </div>

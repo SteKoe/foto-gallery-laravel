@@ -118,6 +118,11 @@ main.container {
         @apply absolute left-0 top-0 rounded-lg backdrop-blur-xl w-full h-full ;
     }
 
+    &:only-child {
+        grid-column-end: span 4;
+        grid-row-end: span 2;
+    }
+
     .label {
         @apply absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
         @apply text-xl font-bold text-white;

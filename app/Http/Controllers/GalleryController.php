@@ -23,6 +23,7 @@ class GalleryController
             $carry[$item['slug']][] = $item;
             return $carry;
         }, []);
+
         $grouped = array_map(function ($item) {
             $more_images = array_map(function ($item) {
                 return $this->getImageSrc($item);
@@ -36,7 +37,7 @@ class GalleryController
                 'name' => $item[0]['name'],
                 'slug' => $item[0]['slug'],
                 'more_images' => $more_images,
-                'total_images' => count($more_images) - 1,
+                'total_images' => count($item) - count($more_images),
             ];
         }, $grouped);
 
