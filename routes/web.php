@@ -19,10 +19,12 @@ Route::get('/gallery/{slug}', [GalleryController::class, 'gallery'])
     ->middleware(GalleryAuth::class);
 
 Route::get('/image/{id}', [GalleryController::class, 'image'])
-    ->name('image');
+    ->name('image')
+    ->middleware(GalleryAuth::class);
 
 Route::get('/logout', [GalleryController::class, 'logout'])
-    ->name('logout');
+    ->name('logout')
+    ->middleware(GalleryAuth::class);
 
 Route::get('/admin', [AdminController::class, 'index'])
     ->name('admin')

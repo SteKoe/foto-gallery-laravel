@@ -9,9 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class GalleryAuth
 {
+
+    private string $PUBLIC_GALLERY_TAG_ID;
+
+    public function __construct()
+    {
+        $this->PUBLIC_GALLERY_TAG_ID = env('APP_PUBLIC_GALLERY_TAG_ID');
+    }
+
     public function handle(Request $request, Closure $next): Response
     {
-        $tags = [9];
+        $tags = [$this->PUBLIC_GALLERY_TAG_ID];
         $user = null;
 
         $cookie = $request->cookie('token');
@@ -32,8 +40,9 @@ class GalleryAuth
                 $allowedTags = $user->tags()->get()->toArray();
 
                 if ($slug !== null) {
+                    // Filter out scopes that do not match the current slot or are not acting as "global"
                     $allowedTags = array_filter($allowedTags, function ($tag) use ($slug) {
-                        return $tag['scope'] === $slug || $tag['scope'] === '' || $tag['scope'] === null;
+                        return $tag['scope'] === $slug || $tag['scope'] === '' || $tag['scope'] === null || $tag['scope'] === 'global';
                     });
                 }
 
@@ -41,9 +50,9 @@ class GalleryAuth
                     return $tag['tag_id'];
                 }, $allowedTags);
 
-                in_array(9, $tags) ? $tags = ['*'] : $tags = [...$tags, 9];
+                in_array($this->PUBLIC_GALLERY_TAG_ID, $tags) ? $tags = ['*'] : $tags = [...$tags, $this->PUBLIC_GALLERY_TAG_ID];
             } else {
-                $tags = [...$tags, 9];
+                $tags = [...$tags, $this->PUBLIC_GALLERY_TAG_ID];
             }
         }
 

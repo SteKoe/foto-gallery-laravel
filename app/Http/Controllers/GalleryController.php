@@ -86,8 +86,6 @@ class GalleryController
 
     private function getScopedGalleryImageQuery($tags = [])
     {
-        $tags = array_merge($tags, [9]);
-
         // When "tags" contains "*" do not filter at all.
         if (in_array('*', $tags)) {
             return GalleryImage::orderBy('displayname');
