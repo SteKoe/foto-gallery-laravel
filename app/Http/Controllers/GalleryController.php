@@ -18,8 +18,7 @@ class GalleryController
 
     function index()
     {
-        $allowed_tags = session()->get('allowed_tags') ?: [9];
-        $galleries = $this->getScopedGalleryImageQuery($allowed_tags)->get()->toArray();
+        $galleries = $this->getScopedGalleryImageQuery(session()->get('allowed_tags'))->get()->toArray();
         $grouped = array_reduce($galleries, function ($carry, $item) {
             $carry[$item['slug']][] = $item;
             return $carry;
@@ -55,12 +54,11 @@ class GalleryController
 
     function gallery(string $slug)
     {
-        $allowed_tags = session()->get('allowed_tags') ?: [9];
-        $images = $this->getScopedGalleryImageQuery($allowed_tags)->where('slug', $slug)->get();
+        $images = $this->getScopedGalleryImageQuery(session()->get('allowed_tags'))->where('slug', $slug)->get();
 
         $name = $images[0]['name'];
         $images = $images->map($this->mapToImageResponse(), $images);
-        return view('gallery', compact('slug', 'images', 'name', 'allowed_tags'));
+        return view('gallery', compact('slug', 'images', 'name'));
     }
 
     function image(string $id)
@@ -88,6 +86,8 @@ class GalleryController
 
     private function getScopedGalleryImageQuery($tags = [])
     {
+        $tags = array_merge($tags, [9]);
+
         // When "tags" contains "*" do not filter at all.
         if (in_array('*', $tags)) {
             return GalleryImage::orderBy('displayname');
