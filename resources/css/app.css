@@ -44,7 +44,7 @@ main.container {
 }
 
 .gallery-images {
-    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 rounded-xl mx-auto;
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mx-auto;
     counter-reset: grid-item-counter;
 }
 
@@ -75,7 +75,7 @@ main.container {
     @apply col-span-2 md:col-span-1;
 
     img {
-        @apply object-cover aspect-square object-center rounded-lg;
+        @apply object-cover aspect-square object-center;
         @apply w-full;
     }
 
@@ -102,12 +102,14 @@ main.container {
     position: relative;
 
     img {
-        @apply w-full h-full rounded-lg object-cover;
+        @apply w-full h-full object-cover;
     }
 }
 
 .image-list--item {
     position: relative;
+
+    @apply overflow-hidden rounded-lg;
 
     &:first-child {
         grid-column-end: span 2;
@@ -115,7 +117,7 @@ main.container {
     }
     &:last-child:has(.label)::after {
         content: '';
-        @apply absolute left-0 top-0 rounded-lg backdrop-blur-xl w-full h-full ;
+        @apply rounded-lg absolute left-0 top-0 backdrop-blur-xl w-full h-full ;
     }
 
     &:only-child {
@@ -126,5 +128,20 @@ main.container {
     .label {
         @apply absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
         @apply text-xl font-bold text-white;
+    }
+}
+
+.gallery-tile {
+    .image-list--item {
+        overflow: hidden;
+    }
+
+    .image-list--item > img {
+        transition: all .3s ease;
+        transform: scale(1);
+    }
+
+    .image-list--item:hover > img {
+        transform: scale(1.1);
     }
 }

@@ -24,8 +24,16 @@ class GallerySyncService
         $this->options = $options;
     }
 
-    public function cleanGallery($name): void
+    public function cleanGallery(?string $name = null): void
     {
+        try {
+            $filesToDelete = $this->localGalleryService->getLocalFiles($name);
+            $this->deleteFiles($filesToDelete);
+        } catch (Exception $e) {
+            error_log('Error cleaning gallery: ' . $e->getMessage());
+            error_log($e->getTraceAsString());
+            throw $e;
+        }
     }
 
     public function syncGallery($name = null): ?GallerySyncResult
