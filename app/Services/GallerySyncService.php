@@ -87,6 +87,20 @@ class GallerySyncService
         }
     }
 
+    public function listRemoteFiles()
+    {
+        $files = $this->remoteGalleryService->getRemoteFiles(null);
+        $names = array_map(function ($galleryImageDescriptor) {
+            return $galleryImageDescriptor->gallery['name'];
+        }, $files);
+
+        $unique = array_values(array_unique($names));
+        natcasesort($unique);
+        array_map(function ($name) {
+            echo $name . "\n";
+        }, array_values($unique));
+    }
+
     /**
      * @param mixed $name
      * @return GallerySyncResult
