@@ -1,3 +1,4 @@
+name: "foto-gallery-php"
 services:
     db:
         image: mariadb

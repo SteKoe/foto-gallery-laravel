@@ -5,11 +5,12 @@ use App\Services\GalleryService;
 use Illuminate\Support\Facades\Artisan;
 use App\Services\GallerySyncService;
 
-Artisan::command('list {--name=}', function (GallerySyncService $syncService) {
-    $name = $this->option('name');
-
+Artisan::command('list', function (GallerySyncService $syncService) {
     $syncService->setOptions($this->options());
-    $syncService->listRemoteFiles($name);
+    $remote = $syncService->listRemoteFiles();
+    array_map(function ($name) {
+        echo $name . "\n";
+    }, array_values($remote));
 })->purpose('List remote files');
 
 Artisan::command('sync {--name=} {--skip-download} {--force}', function (GallerySyncService $syncService) {

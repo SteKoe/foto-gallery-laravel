@@ -28,11 +28,10 @@ class GallerySyncService
     {
     }
 
-    public function syncGallery($name = null): void
+    public function syncGallery($name = null): ?GallerySyncResult
     {
         try {
             $syncResult = $this->getSyncResult($name);
-            echo $syncResult->toString();
 
             $this->deleteFiles($syncResult->filesToRemove);
 
@@ -61,9 +60,13 @@ class GallerySyncService
                     $this->remoteGalleryService->downloadFile($file, $galleryImage->file_id);
                 }
             }
+
+            return $syncResult;
         } catch (Exception $e) {
-            echo 'Error syncing galleries: ' . $e->getMessage();
-            echo $e->getTraceAsString();
+            // Let controller handle returning an appropriate HTTP response; log and return null here
+            error_log('Error syncing galleries: ' . $e->getMessage());
+            error_log($e->getTraceAsString());
+            return null;
         }
     }
 
@@ -96,9 +99,7 @@ class GallerySyncService
 
         $unique = array_values(array_unique($names));
         natcasesort($unique);
-        array_map(function ($name) {
-            echo $name . "\n";
-        }, array_values($unique));
+        return $unique;
     }
 
     /**
@@ -137,5 +138,4 @@ class GallerySyncService
         return array_key_exists($key, $this->options) ? $this->options[$key] : null;
     }
 }
-
 

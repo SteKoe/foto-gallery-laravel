@@ -61,3 +61,16 @@ Route::post('/admin/user/{user_id}/delete', [AdminController::class, 'delete_use
         GalleryAuth::class,
         AdminAuth::class
     ]);
+Route::get('/admin/sync', [AdminController::class, 'sync'])
+    ->name('admin.sync')
+    ->middleware([
+        GalleryAuth::class,
+        AdminAuth::class
+    ]);
+Route::get('/admin/sync/{name}', [AdminController::class, 'sync'])
+    ->name('admin.sync')
+    ->middleware([
+        GalleryAuth::class,
+        AdminAuth::class
+    ]);
+

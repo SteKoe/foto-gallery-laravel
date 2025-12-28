@@ -5,11 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\GalleryImage;
 use App\Models\GalleryImageTag;
 use App\Models\GalleryUser;
+use App\Services\GallerySyncService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class AdminController
 {
+    private GallerySyncService $syncService;
+
+    public function __construct(GallerySyncService $gallerySyncService)
+    {
+        $this->syncService = $gallerySyncService;
+    }
     public function index()
     {
         $users = $this->get_all_users();
@@ -104,5 +112,51 @@ class AdminController
         $user->delete();
 
         return redirect()->route('admin');
+    }
+
+    public function sync(Request $request, ?string $name = null): JsonResponse
+    {
+        $options = [];
+        if ($request->has('skip-download')) {
+            $options['skip-download'] = filter_var($request->input('skip-download'), FILTER_VALIDATE_BOOLEAN);
+        }
+        if ($request->has('force')) {
+            $options['force'] = filter_var($request->input('force'), FILTER_VALIDATE_BOOLEAN);
+        }
+
+        $this->syncService->setOptions($options);
+
+        $syncResult = $this->syncService->syncGallery($name);
+
+        if ($syncResult === null) {
+            return response()->json(['error' => 'Error syncing galleries'], 500);
+        }
+
+        $mapDescriptor = function ($d) {
+            return [
+                'fileid' => $d->fileid,
+                'href' => $d->href,
+                'displayname' => $d->displayname,
+                'isFolder' => $d->isFolder,
+                'tags' => $d->tags,
+                'gallery' => $d->gallery,
+                'section' => $d->section,
+            ];
+        };
+
+        $filesToDownload = array_map($mapDescriptor, $syncResult->filesToDownload);
+        $filesToRemove = array_map($mapDescriptor, $syncResult->filesToRemove);
+        $filesUntouched = array_map($mapDescriptor, $syncResult->filesUntouched);
+
+        return response()->json([
+            'counts' => [
+                'toDownload' => count($filesToDownload),
+                'toRemove' => count($filesToRemove),
+                'untouched' => count($filesUntouched),
+            ],
+            'filesToDownload' => $filesToDownload,
+            'filesToRemove' => $filesToRemove,
+            'filesUntouched' => $filesUntouched,
+        ]);
     }
 }
