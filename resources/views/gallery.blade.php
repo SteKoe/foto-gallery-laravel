@@ -8,6 +8,7 @@
             >
                 <img
                     loading="lazy"
+                    alt=""
                     data-orientation="{{ $image['orientation'] }}"
                     src="{{ $image['href'] }}"
                     title="{{ $image['tags'] }}"
