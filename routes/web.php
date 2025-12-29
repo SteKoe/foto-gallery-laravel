@@ -22,6 +22,9 @@ Route::get('/image/{id}', [GalleryController::class, 'image'])
     ->name('image')
     ->middleware(GalleryAuth::class);
 
+Route::get('/thumb', [GalleryController::class, 'thumbnail'])
+    ->middleware(GalleryAuth::class);
+
 Route::get('/logout', [GalleryController::class, 'logout'])
     ->name('logout')
     ->middleware(GalleryAuth::class);

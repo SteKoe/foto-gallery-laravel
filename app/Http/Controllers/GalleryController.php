@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\GalleryImage;
 use App\Services\GallerySyncService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class GalleryController
 {
@@ -63,11 +67,8 @@ class GalleryController
 
     function image(string $id)
     {
-        $image = GalleryImage::find($id);
+        $path = $this->getGalleryImage($id);
 
-        $response = $this->mapToImageResponse()($image);
-
-        $path = public_path($response['href']);
         $file = file_get_contents($path);
         $type = mime_content_type($path);
 
@@ -114,7 +115,7 @@ class GalleryController
         /**
          * @return array<GalleryImage>
          */
-        return function ($image) : array {
+        return function ($image): array {
             $pathinfo = pathinfo($image['href']);
             $src = "{$image['file_id']}.{$pathinfo['extension']}";
 
@@ -132,20 +133,76 @@ class GalleryController
                 ],
                 "orientation" => $width > $height ? 'landscape' : 'portrait',
                 "slug" => $image['slug'],
+                "path" => $this->getImagePath($image),
                 "href" => $this->getImageSrc($image)
             );
         };
+    }
+
+    public function thumbnail(Request $request)
+    {
+        $url = $request->input('href');
+        $path = parse_url($url, PHP_URL_PATH);
+        $path = public_path($path);
+        abort_unless(File::exists($path) && File::isFile($path), 404);
+
+        $imageManager = new ImageManager(new Driver());
+        $dst = $imageManager->read($path);
+        $dst->core()->native()->stripImage();
+        $dst->scale(320, 320);
+        $image = $dst->toJpeg(90);
+        $type = $image->mimetype();
+        unset($imageManager, $dst);
+
+        return response($image, 200)->header('Content-Type', $type);
     }
 
     /**
      * @param array $gallery
      * @return string
      */
-    private function getImageSrc(array | GalleryImage $gallery): string
+    private function getImageSrc(array|GalleryImage $gallery): string
     {
         $pathinfo = pathinfo($gallery['href']);
         $src = "{$gallery['file_id']}.{$pathinfo['extension']}";
         $src = env('APP_URL') . '/images/gallery/' . $gallery['slug'] . '/' . $src;
         return $src;
+    }
+
+    /**
+     * @param array $gallery
+     * @return string
+     */
+    private function getImagePath(array|GalleryImage $gallery): string
+    {
+        $pathinfo = pathinfo($gallery['href']);
+        $src = "{$gallery['file_id']}.{$pathinfo['extension']}";
+        $src = '/images/gallery/' . $gallery['slug'] . '/' . $src;
+        return $src;
+    }
+
+    /**
+     * @param string $id
+     * @return string
+     */
+    public function getGalleryImage(string $id): string
+    {
+// Allow $id to be <uuid>.jpg and strip file extension
+        $filename = pathinfo(parse_url($id, PHP_URL_PATH), PATHINFO_FILENAME);
+        $id = $filename;
+        $image = GalleryImage::find($id);
+        abort_unless($image != null, 404);
+
+        $data = ($this->mapToImageResponse())($image);
+
+        $href = $data['href'] ?? null;
+        abort_unless(is_string($href) && $href !== '', 404);
+
+        $path = $data['path'] ?? null;
+        abort_unless(is_string($path) && $path !== '', 404);
+
+        $path = public_path($path);
+        abort_unless(File::exists($path) && File::isFile($path), 404);
+        return $path;
     }
 }

@@ -13,7 +13,7 @@
                     <div class="image-list--item">
                         <img
                             loading="lazy"
-                            src="{{ $gallery['cover'] }}"
+                            src="/thumb?href={{ $gallery['cover'] }}"
                             alt="{{ $gallery['cover'] }}"
                         >
                     </div>
@@ -21,7 +21,7 @@
                     <div class="image-list--item">
                         <img
                             loading="lazy"
-                            src="{{ $more_image }}"
+                            src="/thumb?href={{ $more_image }}"
                         >
                         @if($gallery['total_images'] > 1 && $idx === count($gallery['more_images'])-1)
                         <div class="label">
