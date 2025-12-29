@@ -146,15 +146,35 @@ class GalleryController
         $path = public_path($path);
         abort_unless(File::exists($path) && File::isFile($path), 404);
 
+        $lastModified = File::lastModified($path);
+        $eTag = '"' . md5($path . $lastModified) . '"';
+
+        // Check if client has cached version via ETag
+        if ($request->getETags() && in_array($eTag, $request->getETags())) {
+            return response('', 304);
+        }
+
+        // Check if client has cached version via If-Modified-Since
+        if ($request->header('If-Modified-Since')) {
+            $ifModifiedSince = strtotime($request->header('If-Modified-Since'));
+            if ($lastModified <= $ifModifiedSince) {
+                return response('', 304);
+            }
+        }
+
         $imageManager = new ImageManager(new Driver());
         $dst = $imageManager->read($path);
         $dst->core()->native()->stripImage();
         $dst->scale(320, 320);
-        $image = $dst->toJpeg(90);
+        $image = $dst->toWebp();
         $type = $image->mimetype();
         unset($imageManager, $dst);
 
-        return response($image, 200)->header('Content-Type', $type);
+        return response($image, 200)
+            ->header('Content-Type', $type)
+            ->header('Cache-Control', 'public, max-age=86400, immutable')
+            ->header('ETag', $eTag)
+            ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
     }
 
     /**
