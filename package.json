@@ -10,7 +10,7 @@
         "test": "./vendor/bin/phpunit tests"
     },
     "devDependencies": {
-        "autoprefixer": "10.4.27",
+        "autoprefixer": "10.5.0",
         "axios": "1.15.2",
         "laravel-vite-plugin": "2.1.0",
         "postcss": "8.5.13",
