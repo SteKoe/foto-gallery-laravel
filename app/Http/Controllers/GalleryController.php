@@ -176,6 +176,7 @@ class GalleryController
             unset($imageManager, $dst);
 
             File::put($cachedPath, (string) $webp);
+            $this->pruneThumbnailCache(dirname($cachedPath));
         }
 
         $lastModified = File::lastModified($cachedPath);
@@ -199,6 +200,29 @@ class GalleryController
             ->header('Cache-Control', 'public, max-age=31536000, immutable')
             ->header('ETag', $eTag)
             ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+    }
+
+    /**
+     * Remove the oldest files from the thumbnail cache directory when the
+     * total size exceeds the configured limit (THUMB_CACHE_MAX_MB, default 5 MB).
+     */
+    private function pruneThumbnailCache(string $cacheDir): void
+    {
+        $maxBytes = (int) env('THUMB_CACHE_MAX_MB', 5) * 1024 * 1024;
+
+        $files = collect(File::files($cacheDir))
+            ->map(fn($f) => ['path' => $f->getPathname(), 'size' => $f->getSize(), 'mtime' => $f->getMTime()])
+            ->sortBy('mtime'); // oldest first
+
+        $totalSize = $files->sum('size');
+
+        foreach ($files as $file) {
+            if ($totalSize <= $maxBytes) {
+                break;
+            }
+            File::delete($file['path']);
+            $totalSize -= $file['size'];
+        }
     }
 
     /**
