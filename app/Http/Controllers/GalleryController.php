@@ -179,6 +179,9 @@ class GalleryController
             $this->pruneThumbnailCache(dirname($cachedPath));
         }
 
+        // Touch the file on each hit so LRU pruning keeps frequently accessed thumbs
+        touch($cachedPath);
+
         $lastModified = File::lastModified($cachedPath);
         $eTag = '"' . md5($cachedPath . $lastModified) . '"';
 
