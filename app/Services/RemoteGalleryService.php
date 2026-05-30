@@ -229,10 +229,7 @@ class RemoteGalleryService
             $dst->core()->native()->stripImage();
             $dst->scale($width, $height);
             $dst->toJpeg(90)->save($outputPath);
-            unset($imageManager, $dst);
-
-
-            $response = null;
+            unset($imageManager, $dst, $response);
             echo "done!\n";
         } catch (Exception $e) {
             echo 'Error downloading and processing file: ' . $e->getMessage();
