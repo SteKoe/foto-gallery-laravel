@@ -41,6 +41,18 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
+            **/vendor/**
             **/storage/**
             **/tests/**
             **/infrastructure/**
+
+      - name: Run composer install on server
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: stekoe.de
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd /www/htdocs/stekoe/www-fotos-kloedwig
+            composer install --no-dev --no-progress --prefer-dist --optimize-autoloader
