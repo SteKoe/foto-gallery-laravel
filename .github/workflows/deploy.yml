@@ -1,6 +1,7 @@
 on:
   push:
     branches:
+      - main
 
 jobs:
   build:
@@ -40,7 +41,6 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/vendor/**
             **/storage/**
             **/tests/**
             **/infrastructure/**
