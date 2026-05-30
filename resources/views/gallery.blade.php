@@ -10,7 +10,7 @@
                     loading="lazy"
                     alt=""
                     data-orientation="{{ $image['orientation'] }}"
-                    src="{{ $image['href'] }}"
+                    src="/thumb?href={{ urlencode($image['href']) }}"
                     title="{{ $image['tags'] }}"
                 >
             </a>

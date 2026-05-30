@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\ImageManager;
 
 class GalleryController
@@ -119,7 +120,10 @@ class GalleryController
             $pathinfo = pathinfo($image['href']);
             $src = "{$image['file_id']}.{$pathinfo['extension']}";
 
-            [$width, $height] = storage_path(('app/public/gallery/' . $image['slug'] . '/' . $src));
+            $fullPath = storage_path('app/public/gallery/' . $image['slug'] . '/' . $src);
+            $imageSize = @getimagesize($fullPath);
+            $width = $imageSize ? $imageSize[0] : 0;
+            $height = $imageSize ? $imageSize[1] : 0;
 
             return array(
                 "file_id" => $image['file_id'],
@@ -134,7 +138,7 @@ class GalleryController
                 "orientation" => $width > $height ? 'landscape' : 'portrait',
                 "slug" => $image['slug'],
                 "path" => $this->getImagePath($image),
-                "href" => $this->getImageSrc($image)
+                "href" => $this->getImageSrc($image),
             );
         };
     }
@@ -146,15 +150,43 @@ class GalleryController
         $path = public_path($path);
         abort_unless(File::exists($path) && File::isFile($path), 404);
 
-        $lastModified = File::lastModified($path);
-        $eTag = '"' . md5($path . $lastModified) . '"';
+        return $this->serveResizedImage($request, $path, 320, 320, 'thumbs');
+    }
 
-        // Check if client has cached version via ETag
+    /**
+     * Generate (and persist) a resized WebP version of an image, served with
+     * proper HTTP caching headers. The generated file is stored in
+     * storage/app/public/{cacheDir}/{uuid}.webp so subsequent requests are
+     * served straight from disk without invoking Imagick again.
+     */
+    private function serveResizedImage(Request $request, string $sourcePath, int $maxWidth, int $maxHeight, string $cacheDir)
+    {
+        $uuid = pathinfo($sourcePath, PATHINFO_FILENAME);
+        $cachedPath = storage_path("app/public/{$cacheDir}/{$uuid}.webp");
+
+        // Generate and persist the resized WebP if it doesn't exist yet
+        if (!File::exists($cachedPath)) {
+            File::ensureDirectoryExists(dirname($cachedPath));
+
+            $imageManager = new ImageManager(new Driver());
+            $dst = $imageManager->decode($sourcePath);
+            $dst->core()->native()->stripImage();
+            $dst->scale($maxWidth, $maxHeight);
+            $webp = $dst->encode(new WebpEncoder(80));
+            unset($imageManager, $dst);
+
+            File::put($cachedPath, (string) $webp);
+        }
+
+        $lastModified = File::lastModified($cachedPath);
+        $eTag = '"' . md5($cachedPath . $lastModified) . '"';
+
+        // Check if client has a cached version via ETag
         if ($request->getETags() && in_array($eTag, $request->getETags())) {
             return response('', 304);
         }
 
-        // Check if client has cached version via If-Modified-Since
+        // Check if client has a cached version via If-Modified-Since
         if ($request->header('If-Modified-Since')) {
             $ifModifiedSince = strtotime($request->header('If-Modified-Since'));
             if ($lastModified <= $ifModifiedSince) {
@@ -162,17 +194,9 @@ class GalleryController
             }
         }
 
-        $imageManager = new ImageManager(new Driver());
-        $dst = $imageManager->read($path);
-        $dst->core()->native()->stripImage();
-        $dst->scale(320, 320);
-        $image = $dst->toWebp();
-        $type = $image->mimetype();
-        unset($imageManager, $dst);
-
-        return response($image, 200)
-            ->header('Content-Type', $type)
-            ->header('Cache-Control', 'public, max-age=86400, immutable')
+        return response(File::get($cachedPath), 200)
+            ->header('Content-Type', 'image/webp')
+            ->header('Cache-Control', 'public, max-age=31536000, immutable')
             ->header('ETag', $eTag)
             ->header('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
     }

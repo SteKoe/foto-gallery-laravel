@@ -53,11 +53,16 @@ class GallerySyncService
                 $galleryImage->slug = $file->gallery['slug'];
 
                 $galleryImage->tags()->sync(array_map(function ($tag) {
-                    $galleryImageTag = GalleryImageTag::firstOrCreate([
-                        'tag_id' => $tag['id']
-                    ]);
-                    $galleryImageTag['tag_value'] = $tag['value'];
-                    $galleryImageTag->save();
+                    $galleryImageTag = GalleryImageTag::firstOrCreate(
+                        ['tag_id' => $tag['id']],
+                        ['tag_value' => $tag['value']]
+                    );
+
+                    // Update tag_value in case it changed on the remote
+                    if ($galleryImageTag->tag_value !== $tag['value']) {
+                        $galleryImageTag->tag_value = $tag['value'];
+                        $galleryImageTag->save();
+                    }
 
                     return $galleryImageTag->tag_id;
                 }, $file->tags));

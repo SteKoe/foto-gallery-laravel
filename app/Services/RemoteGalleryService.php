@@ -9,6 +9,7 @@ use App\Models\GuessGalleryWithoutDateInHref;
 use App\Utils\ArrayUtils;
 use Exception;
 use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\ImageManager;
 use Sabre\DAV\Client;
 use Sabre\Xml\Service;
@@ -225,10 +226,10 @@ class RemoteGalleryService
             [$width, $height] = $dimensions;
 
             $imageManager = new ImageManager(new Driver());
-            $dst = $imageManager->read($response['body']);
+            $dst = $imageManager->decode($response['body']);
             $dst->core()->native()->stripImage();
             $dst->scale($width, $height);
-            $dst->toJpeg(90)->save($outputPath);
+            $dst->encode(new JpegEncoder(90))->save($outputPath);
             unset($imageManager, $dst, $response);
             echo "done!\n";
         } catch (Exception $e) {
