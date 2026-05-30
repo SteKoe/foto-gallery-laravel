@@ -208,7 +208,7 @@ class GalleryController
      */
     private function pruneThumbnailCache(string $cacheDir): void
     {
-        $maxBytes = (int) env('THUMB_CACHE_MAX_MB', 5) * 1024 * 1024;
+        $maxBytes = (int) env('THUMB_CACHE_MAX_MB', 500) * 1024 * 1024;
 
         $files = collect(File::files($cacheDir))
             ->map(fn($f) => ['path' => $f->getPathname(), 'size' => $f->getSize(), 'mtime' => $f->getMTime()])
