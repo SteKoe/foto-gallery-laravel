@@ -172,7 +172,7 @@ class GalleryController
             $dst = $imageManager->decode($sourcePath);
             $dst->core()->native()->stripImage();
             $dst->scale($maxWidth, $maxHeight);
-            $webp = $dst->encode(new WebpEncoder(80));
+            $webp = $dst->encode(new WebpEncoder(100));
             unset($imageManager, $dst);
 
             File::put($cachedPath, (string) $webp);
