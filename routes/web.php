@@ -34,47 +34,60 @@ Route::get('/admin', [AdminController::class, 'index'])
     ->name('admin')
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
 
 Route::get('/admin/user', [AdminController::class, 'create_user'])
     ->name('admin.user.new')
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
 Route::post('/admin/user', [AdminController::class, 'create_user'])
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
 
 Route::get('/admin/user/{user_id}', [AdminController::class, 'user'])
     ->name('admin.user')
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
 Route::post('/admin/user/{user_id}', [AdminController::class, 'save_user'])
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
 Route::post('/admin/user/{user_id}/delete', [AdminController::class, 'delete_user'])
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
+Route::get('/admin/galleries', [AdminController::class, 'galleries'])
+    ->name('admin.galleries')
+    ->middleware([
+        GalleryAuth::class,
+        AdminAuth::class,
+    ]);
+
+Route::post('/admin/clean/{name}', [AdminController::class, 'clean'])
+    ->name('admin.clean')
+    ->middleware([
+        GalleryAuth::class,
+        AdminAuth::class,
+    ]);
+
 Route::get('/admin/sync', [AdminController::class, 'sync'])
     ->name('admin.sync')
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
 Route::get('/admin/sync/{name}', [AdminController::class, 'sync'])
     ->name('admin.sync')
     ->middleware([
         GalleryAuth::class,
-        AdminAuth::class
+        AdminAuth::class,
     ]);
-

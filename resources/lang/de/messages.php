@@ -1,4 +1,5 @@
 <?php
+
 return [
     'sign_out' => 'Abmelden',
     'admin' => 'Admin',
@@ -10,5 +11,20 @@ return [
     'settings_token_title' => 'Token Einstellungen',
     'settings_gallery_settings_title' => 'Galerieeinstellungen',
     'settings_gallery_settings_description' => 'Auf dieser Seite können Sie die Galerieeinstellungen für Benutzer verwalten. Der Zugriff auf Bilder wird auf der Grundlage der den Bildern zugewiesenen Tags gewährt. Globale Tag-Einstellungen werden auf alle Galerien angewendet. Tag-Einstellungen für eine bestimmte Galerie erweitern die globalen Einstellungen.',
-    'user_new' => 'Neuer Benutzer'
+    'user_new' => 'Neuer Benutzer',
+    'galleries' => 'Galerien',
+    'synced_galleries' => 'Synchronisierte Galerien',
+    'no_synced_galleries' => 'Keine synchronisierten Galerien gefunden.',
+    'gallery_name' => 'Galeriename',
+    'gallery_slug' => 'Slug',
+    'gallery_image_count' => 'Bilder',
+    'gallery_action' => 'Aktion',
+    'resync' => 'Resync',
+    'resyncing' => 'Synchronisiere...',
+    'resync_success' => ':count Bilder heruntergeladen, :removed entfernt',
+    'resync_error' => 'Fehler beim Synchronisieren',
+    'delete' => 'Löschen',
+    'delete_confirm' => 'Galerie ":name" wirklich vom lokalen Speicher löschen?',
+    'delete_success' => 'Galerie gelöscht',
+    'delete_error' => 'Fehler beim Löschen',
 ];

@@ -6,9 +6,9 @@ use App\Models\GalleryImage;
 use App\Models\GalleryImageTag;
 use App\Models\GalleryUser;
 use App\Services\GallerySyncService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class AdminController
 {
@@ -18,6 +18,7 @@ class AdminController
     {
         $this->syncService = $gallerySyncService;
     }
+
     public function index()
     {
         $users = $this->get_all_users();
@@ -33,12 +34,12 @@ class AdminController
     public function create_user(Request $request)
     {
         if ($request->method() == 'POST') {
-            $user = new GalleryUser();
+            $user = new GalleryUser;
             $attributes = request()->all();
             $user->fill([
                 ...$attributes,
-                "is_admin" => isset($attributes["is_admin"]) ? 1 : 0,
-                "token" => $attributes["user_token"],
+                'is_admin' => isset($attributes['is_admin']) ? 1 : 0,
+                'token' => $attributes['user_token'],
             ]);
             $user->save();
 
@@ -59,7 +60,7 @@ class AdminController
 
         $checkedTags = [];
         foreach ($user->tags->toArray() as $checkedTag) {
-            $checkedTags[$checkedTag['scope'] ?: "global"][] = $checkedTag;
+            $checkedTags[$checkedTag['scope'] ?: 'global'][] = $checkedTag;
         }
 
         $galleryImageTags = GalleryImageTag::all()->sortBy('tag_value');
@@ -80,19 +81,19 @@ class AdminController
         $attributes = request()->all();
         $user->fill([
             ...$attributes,
-            "is_admin" => isset($attributes["is_admin"]) ? 1 : 0,
-            "token" => $attributes["user_token"],
+            'is_admin' => isset($attributes['is_admin']) ? 1 : 0,
+            'token' => $attributes['user_token'],
         ]);
         $user->tags()->detach();
 
-        if (isset($attributes["tag"])) {
+        if (isset($attributes['tag'])) {
             $newTags = [];
-            foreach ($attributes["tag"] as $gallery_slug => $tags) {
+            foreach ($attributes['tag'] as $gallery_slug => $tags) {
                 $mapped = array_map(function ($tag) use ($gallery_slug, $user) {
                     return [
                         'tag_id' => $tag,
                         'scope' => $gallery_slug,
-                        'user_id' => $user->user_id
+                        'user_id' => $user->user_id,
                     ];
                 }, $tags);
 
@@ -112,6 +113,29 @@ class AdminController
         $user->delete();
 
         return redirect()->route('admin');
+    }
+
+    public function galleries()
+    {
+        $users = $this->get_all_users();
+
+        $galleries = GalleryImage::selectRaw('slug, name, COUNT(*) as image_count')
+            ->groupBy('slug', 'name')
+            ->orderBy('slug', 'desc')
+            ->get();
+
+        return view('admin.galleries', compact('users', 'galleries'));
+    }
+
+    public function clean(string $name): JsonResponse
+    {
+        try {
+            $this->syncService->cleanGallery($name);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error cleaning gallery'], 500);
+        }
     }
 
     public function sync(Request $request, ?string $name = null): JsonResponse
