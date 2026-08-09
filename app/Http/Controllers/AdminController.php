@@ -26,6 +26,13 @@ class AdminController
         return view('admin.index', compact('users'));
     }
 
+    public function users()
+    {
+        $users = $this->get_all_users();
+
+        return view('admin.users', compact('users'));
+    }
+
     private function get_all_users()
     {
         return GalleryUser::orderBy('is_admin', 'DESC')->orderBy('token')->get();
@@ -43,7 +50,8 @@ class AdminController
             ]);
             $user->save();
 
-            return redirect()->route('admin.user', ['user_id' => $user->user_id]);
+            return redirect()->route('admin.user', ['user_id' => $user->user_id])
+                ->with('success', __('messages.user_created'));
         }
 
         $users = $this->get_all_users();
@@ -63,16 +71,22 @@ class AdminController
             $checkedTags[$checkedTag['scope'] ?: 'global'][] = $checkedTag;
         }
 
+        $globalCheckedTagIds = array_map(
+            fn ($tag) => $tag['tag_id'],
+            $checkedTags['global'] ?? []
+        );
+
         $galleryImageTags = GalleryImageTag::all()->sortBy('tag_value');
 
-        $galleries = GalleryImage::groupBy('slug')
+        $galleries = GalleryImage::select('slug', 'name')
+            ->groupBy('slug', 'name')
             ->orderBy('slug', 'desc')
             ->get()
             ->toArray();
 
         $isCurrentUser = $user->user_id == $request->session()->get('user')->user_id;
 
-        return view('admin.user', compact('user', 'users', 'galleries', 'galleryImageTags', 'checkedTags', 'isCurrentUser'));
+        return view('admin.user', compact('user', 'users', 'galleries', 'galleryImageTags', 'checkedTags', 'globalCheckedTagIds', 'isCurrentUser'));
     }
 
     public function save_user($user_id): RedirectResponse
@@ -104,7 +118,8 @@ class AdminController
 
         $user->save();
 
-        return redirect()->route('admin.user', ['user_id' => $user_id]);
+        return redirect()->route('admin.user', ['user_id' => $user_id])
+            ->with('success', __('messages.user_saved'));
     }
 
     public function delete_user($user_id): RedirectResponse
@@ -112,7 +127,8 @@ class AdminController
         $user = GalleryUser::find($user_id);
         $user->delete();
 
-        return redirect()->route('admin');
+        return redirect()->route('admin.users')
+            ->with('success', __('messages.user_deleted'));
     }
 
     public function galleries()

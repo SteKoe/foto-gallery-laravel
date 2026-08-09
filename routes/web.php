@@ -37,6 +37,13 @@ Route::get('/admin', [AdminController::class, 'index'])
         AdminAuth::class,
     ]);
 
+Route::get('/admin/users', [AdminController::class, 'users'])
+    ->name('admin.users')
+    ->middleware([
+        GalleryAuth::class,
+        AdminAuth::class,
+    ]);
+
 Route::get('/admin/user', [AdminController::class, 'create_user'])
     ->name('admin.user.new')
     ->middleware([

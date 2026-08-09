@@ -1,4 +1,11 @@
 <x-admin-layout title="Admin" subtitle="Administration" :users="$users">
+    @if (session('success'))
+        <x-alert.success>{{ session('success') }}</x-alert.success>
+    @endif
+    @if (session('error'))
+        <x-alert.error>{{ session('error') }}</x-alert.error>
+    @endif
+
     <h1 class="h1">
         {{ __('messages.user_new') }}
     </h1>

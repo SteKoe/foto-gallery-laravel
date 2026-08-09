@@ -1,4 +1,11 @@
 <x-admin-layout title="Admin" subtitle="Administration" :users="$users">
+    @if (session('success'))
+        <x-alert.success>{{ session('success') }}</x-alert.success>
+    @endif
+    @if (session('error'))
+        <x-alert.error>{{ session('error') }}</x-alert.error>
+    @endif
+
     <h1 class="h1">
         {{ __('messages.settings_title') }}
         @if ($isCurrentUser)
@@ -54,6 +61,7 @@
                 :gallery="null"
                 :galleryImageTags="$galleryImageTags"
                 :checkedTags="array_key_exists('global', $checkedTags) ? $checkedTags['global'] : []"
+                :globalCheckedTagIds="$globalCheckedTagIds"
             />
         </div>
 
@@ -64,6 +72,7 @@
                 :gallery="$gallery"
                 :galleryImageTags="$galleryImageTags"
                 :checkedTags="array_key_exists($gallery['slug'], $checkedTags) ? $checkedTags[$gallery['slug']] : []"
+                :globalCheckedTagIds="$globalCheckedTagIds"
             />
         </div>
         @endforeach
