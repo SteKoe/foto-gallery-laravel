@@ -125,6 +125,7 @@ class AdminController
     public function delete_user($user_id): RedirectResponse
     {
         $user = GalleryUser::find($user_id);
+        $user->tags()->detach();
         $user->delete();
 
         return redirect()->route('admin.users')
