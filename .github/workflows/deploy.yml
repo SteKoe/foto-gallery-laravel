@@ -15,7 +15,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, intl, bcmath, gd, pdo, pdo_mysql, xml, curl, json, fileinfo, openssl, tokenizer, xmlwriter, dom, zip
+          extensions: mbstring, intl, bcmath, gd, pdo, pdo_mysql, pdo_sqlite, xml, curl, json, fileinfo, openssl, tokenizer, xmlwriter, dom, zip
           ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=512M
 
       - name: Install Composer dependencies
