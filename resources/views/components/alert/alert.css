@@ -5,12 +5,17 @@
 
     @apply rounded bg-[var(--background-color)] p-4 text-[--primary-color] mb-4;
 
-
-    &.alert--info {
-
-    }
-
     .alert__title {
         @apply text-[--secondary-color] font-bold mb-2;
     }
+}
+
+.alert--success {
+    --background-color: #d1fae5;
+    --secondary-color: #059669;
+}
+
+.alert--error {
+    --background-color: #fee2e2;
+    --secondary-color: #dc2626;
 }
