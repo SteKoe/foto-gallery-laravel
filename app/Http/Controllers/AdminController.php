@@ -9,6 +9,7 @@ use App\Services\GallerySyncService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AdminController
 {
@@ -103,15 +104,12 @@ class AdminController
         if (isset($attributes['tag'])) {
             $newTags = [];
             foreach ($attributes['tag'] as $gallery_slug => $tags) {
-                $mapped = array_map(function ($tag) use ($gallery_slug, $user) {
-                    return [
-                        'tag_id' => $tag,
+                foreach ($tags as $tag) {
+                    $newTags[$tag] = [
+                        'id' => Str::uuid()->toString(),
                         'scope' => $gallery_slug,
-                        'user_id' => $user->user_id,
                     ];
-                }, $tags);
-
-                $newTags = array_merge($newTags, $mapped);
+                }
             }
             $user->tags()->attach($newTags);
         }
