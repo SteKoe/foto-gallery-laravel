@@ -48,7 +48,7 @@ jobs:
 
       - name: Run composer install on server
         if: github.ref == 'refs/heads/main'
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: stekoe.de
           username: ${{ secrets.SSH_USERNAME }}
