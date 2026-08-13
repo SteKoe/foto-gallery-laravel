@@ -214,6 +214,14 @@ class GalleryAccessTest extends TestCase
         $response->assertDontSee('/gallery/gallery-b');
     }
 
+    public function test_nonexistent_gallery_returns_404(): void
+    {
+        $response = $this->get('/gallery/does-not-exist');
+
+        $response->assertStatus(404);
+        $response->assertSee('404');
+    }
+
     // ------------------------------------------------------------------
     // Token delivery
     // ------------------------------------------------------------------

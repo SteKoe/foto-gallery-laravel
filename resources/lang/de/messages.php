@@ -37,4 +37,6 @@ return [
     'user_saved' => 'Benutzer erfolgreich gespeichert.',
     'user_deleted' => 'Benutzer erfolgreich gelöscht.',
     'tag_inherited' => '(vererbt)',
+    'error_404_text' => 'Die angeforderte Galerie existiert nicht oder ist für dich nicht sichtbar.',
+    'error_404_back' => 'Zurück zur Übersicht',
 ];

@@ -61,6 +61,10 @@ class GalleryController
     {
         $images = $this->getScopedGalleryImageQuery(session()->get('allowed_tags'))->where('slug', $slug)->get();
 
+        if ($images->isEmpty()) {
+            abort(404);
+        }
+
         $name = $images[0]['name'];
         $images = $images->map($this->mapToImageResponse(), $images);
         return view('gallery', compact('slug', 'images', 'name'));
