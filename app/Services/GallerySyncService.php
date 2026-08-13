@@ -44,34 +44,17 @@ class GallerySyncService
             $this->deleteFiles($syncResult->filesToRemove);
 
             foreach ($syncResult->filesToDownload as $file) {
-                $galleryImage = GalleryImage::firstOrCreate([
-                    'fileid' => $file->fileid
-                ]);
-                $galleryImage->displayname = $file->displayname;
-                $galleryImage->href = $file->href;
-                $galleryImage->name = $file->gallery['name'];
-                $galleryImage->slug = $file->gallery['slug'];
-
-                $galleryImage->tags()->sync(array_map(function ($tag) {
-                    $galleryImageTag = GalleryImageTag::firstOrCreate(
-                        ['tag_id' => $tag['id']],
-                        ['tag_value' => $tag['value']]
-                    );
-
-                    // Update tag_value in case it changed on the remote
-                    if ($galleryImageTag->tag_value !== $tag['value']) {
-                        $galleryImageTag->tag_value = $tag['value'];
-                        $galleryImageTag->save();
-                    }
-
-                    return $galleryImageTag->tag_id;
-                }, $file->tags));
-
+                $galleryImage = $this->syncImageMetadata($file);
                 $galleryImage->save();
 
                 if (!isset($this->options['skip-download']) || $this->options['skip-download'] !== true) {
                     $this->remoteGalleryService->downloadFile($file, $galleryImage->file_id);
                 }
+            }
+
+            foreach ($syncResult->filesUntouched as $file) {
+                $galleryImage = $this->syncImageMetadata($file);
+                $galleryImage->save();
             }
 
             return $syncResult;
@@ -81,6 +64,34 @@ class GallerySyncService
             error_log($e->getTraceAsString());
             return null;
         }
+    }
+
+    private function syncImageMetadata(GalleryImageDescriptor $file): GalleryImage
+    {
+        $galleryImage = GalleryImage::firstOrCreate([
+            'fileid' => $file->fileid
+        ]);
+        $galleryImage->displayname = $file->displayname;
+        $galleryImage->href = $file->href;
+        $galleryImage->name = $file->gallery['name'];
+        $galleryImage->slug = $file->gallery['slug'];
+
+        $galleryImage->tags()->sync(array_map(function ($tag) {
+            $galleryImageTag = GalleryImageTag::firstOrCreate(
+                ['tag_id' => $tag['id']],
+                ['tag_value' => $tag['value']]
+            );
+
+            // Update tag_value in case it changed on the remote
+            if ($galleryImageTag->tag_value !== $tag['value']) {
+                $galleryImageTag->tag_value = $tag['value'];
+                $galleryImageTag->save();
+            }
+
+            return $galleryImageTag->tag_id;
+        }, $file->tags));
+
+        return $galleryImage;
     }
 
 
@@ -131,9 +142,8 @@ class GallerySyncService
             $filesToDownload = ArrayUtils::subtract($filesRemote, $filesLocal);
         }
 
-        $tmp = ArrayUtils::subtract($filesRemote, $filesToDownload);
-        $filesToRemove = ArrayUtils::subtract($filesLocal, $tmp);
-        $filesUntouched = ArrayUtils::subtract($filesLocal, $filesToRemove);
+        $filesUntouched = ArrayUtils::subtract($filesRemote, $filesToDownload);
+        $filesToRemove = ArrayUtils::subtract($filesLocal, $filesUntouched);
 
         return new GallerySyncResult(
             $filesToDownload,
